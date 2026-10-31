@@ -1,0 +1,200 @@
+<%- include('../partials/head', { title: 'Payment Transactions — Admin Panel' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <!-- Admin Navigation Header -->
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-bold">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+        </div>
+        <span class="font-bold text-slate-100 tracking-tight">JoSAA Admin Panel</span>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold">
+        <a href="<%= adminRoutePath %>" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Dashboard</a>
+        <a href="<%= adminRoutePath %>/payments" class="px-3 py-1.5 rounded-lg bg-slate-800 text-sky-400">Payment Verification</a>
+        <a href="<%= adminRoutePath %>/audit" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Data Audit</a>
+        <a href="<%= adminRoutePath %>/imports" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">CSV Imports</a>
+        <a href="<%= adminRoutePath %>/settings" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Settings</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="text-slate-400">Admin: <strong class="text-slate-200"><%= admin.username %></strong></span>
+        <a href="<%= adminRoutePath %>/logout" class="px-3 py-1.5 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/50 transition">Log Out</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Title & Status Filters -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">UPI Payment Verification &amp; History</h1>
+        <p class="text-xs text-slate-400 mt-1">
+          Review 12-digit UTR numbers submitted by students via Navi, PhonePe, and Paytm. Click "Approve &amp; Unlock" to release choice list downloads.
+        </p>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="flex rounded-xl border border-slate-700 p-1 bg-slate-800 text-xs font-semibold">
+        <a href="<%= adminRoutePath %>/payments?status=all" class="px-3 py-1.5 rounded-lg <%= currentFilter === 'all' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white' %> transition">All</a>
+        <a href="<%= adminRoutePath %>/payments?status=pending" class="px-3 py-1.5 rounded-lg <%= currentFilter === 'pending' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-white' %> transition">Needs Review</a>
+        <a href="<%= adminRoutePath %>/payments?status=approved" class="px-3 py-1.5 rounded-lg <%= currentFilter === 'approved' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-400 hover:text-white' %> transition">Approved</a>
+        <a href="<%= adminRoutePath %>/payments?status=failed" class="px-3 py-1.5 rounded-lg <%= currentFilter === 'failed' ? 'bg-red-600 text-white font-bold' : 'text-slate-400 hover:text-white' %> transition">Rejected</a>
+      </div>
+    </div>
+
+    <!-- Payments Table Card -->
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-bold tracking-wider">
+            <tr>
+              <th class="py-3 px-4">ID</th>
+              <th class="py-3 px-4">Student Info</th>
+              <th class="py-3 px-4">12-Digit UTR / Ref ID</th>
+              <th class="py-3 px-3 text-center">App</th>
+              <th class="py-3 px-3 text-center">Amount</th>
+              <th class="py-3 px-3 text-center">Status</th>
+              <th class="py-3 px-4 text-center">Action</th>
+              <th class="py-3 px-4 text-right">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700 font-mono">
+            <% if (payments.length === 0) { %>
+              <tr>
+                <td colspan="8" class="text-center py-12 text-slate-500 font-sans">
+                  No payment transactions found under the current filter.
+                </td>
+              </tr>
+            <% } %>
+
+            <% payments.forEach(p => { %>
+              <tr class="hover:bg-slate-700/40 transition">
+                <td class="py-3.5 px-4 font-bold text-slate-400">#<%= p.id %></td>
+                
+                <td class="py-3.5 px-4 font-sans">
+                  <span class="font-bold text-slate-100 block"><%= p.user_name %></span>
+                  <span class="text-slate-400 text-[10px]"><%= p.user_email %> • <%= p.user_mobile || 'No Mobile' %></span>
+                </td>
+
+                <td class="py-3.5 px-4 font-mono font-bold text-sky-400 select-all">
+                  <%= p.upi_reference_id || p.razorpay_order_id || 'N/A' %>
+                </td>
+
+                <td class="py-3.5 px-3 text-center font-sans">
+                  <% const method = (p.payment_method || '').toLowerCase(); %>
+                  <% if (method.includes('phonepe')) { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/50 text-purple-300 border border-purple-700">PhonePe</span>
+                  <% } else if (method.includes('paytm')) { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-900/50 text-sky-300 border border-sky-700">Paytm</span>
+                  <% } else if (method.includes('navi')) { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/50 text-emerald-300 border border-emerald-700">Navi</span>
+                  <% } else { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-900 border border-slate-700 text-slate-300">UPI</span>
+                  <% } %>
+                </td>
+
+                <td class="py-3.5 px-3 text-center font-bold text-slate-100">
+                  ₹<%= (p.amount / 100).toFixed(0) %>
+                </td>
+
+                <!-- Status Badge -->
+                <td class="py-3.5 px-3 text-center font-sans">
+                  <% if (p.status === 'approved') { %>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-900/40 text-emerald-300 border border-emerald-800">
+                      Approved
+                    </span>
+                  <% } else if (p.status === 'pending') { %>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-900/40 text-amber-300 border border-amber-800 animate-pulse">
+                      Pending Review
+                    </span>
+                  <% } else { %>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-900/40 text-red-300 border border-red-800" title="<%= p.error_description || p.rejection_reason || 'Rejected' %>">
+                      Rejected
+                    </span>
+                  <% } %>
+                </td>
+
+                <!-- Action Column -->
+                <td class="py-3.5 px-4 text-center font-sans">
+                  <% if (p.status === 'pending') { %>
+                    <div class="inline-flex items-center space-x-1.5">
+                      <button type="button" onclick="approvePayment(<%= p.id %>)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-sm transition flex items-center space-x-1 cursor-pointer">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                        <span>Approve &amp; Unlock</span>
+                      </button>
+                      <button type="button" onclick="rejectPayment(<%= p.id %>)" class="px-2 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-300 font-semibold text-[11px] border border-red-800 transition cursor-pointer" title="Reject Payment">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  <% } else if (p.status === 'approved') { %>
+                    <span class="text-emerald-400 font-semibold text-[11px] flex items-center justify-center space-x-1">
+                      <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      <span>Unlocked</span>
+                    </span>
+                  <% } else { %>
+                    <span class="text-slate-500 text-[11px]">No Action</span>
+                  <% } %>
+                </td>
+
+                <td class="py-3.5 px-4 text-right text-slate-400 text-[10px] font-sans">
+                  <%= p.submitted_at %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  async function approvePayment(paymentId) {
+    if (!confirm('Approve payment #' + paymentId + ' and unlock choice list downloads for this student?')) return;
+
+    try {
+      const res = await fetch('<%= adminRoutePath %>/payments/' + paymentId + '/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert('Failed to approve payment: ' + (data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Error approving payment: ' + err.message);
+    }
+  }
+
+  async function rejectPayment(paymentId) {
+    const reason = prompt('Please enter rejection reason (e.g. UTR not found, incorrect amount):', 'Invalid or unverified UTR');
+    if (!reason) return;
+
+    try {
+      const res = await fetch('<%= adminRoutePath %>/payments/' + paymentId + '/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert('Failed to reject payment: ' + (data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Error rejecting payment: ' + err.message);
+    }
+  }
+</script>
+</body>
+</html>

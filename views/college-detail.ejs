@@ -1,0 +1,153 @@
+<%- include('partials/head', { title: college.name + ' — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8 space-y-8">
+  
+  <!-- Back Breadcrumb -->
+  <div>
+    <a href="/explore" class="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 transition group">
+      <i data-lucide="arrow-left" class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform"></i>
+      <span>Back to College Explorer</span>
+    </a>
+  </div>
+
+  <!-- College Hero Header Card -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-9 space-y-6">
+    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6 pb-6 border-b border-slate-100">
+      <div>
+        <div class="flex flex-wrap items-center gap-2 mb-2.5">
+          <span class="px-3 py-1 rounded-lg text-xs font-bold font-mono tracking-wider <%= college.type === 'IIT' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-800 border border-amber-200' %>">
+            <%= college.type %> • <%= college.josaa_code %>
+          </span>
+          <span class="text-xs font-bold font-mono text-slate-700 bg-slate-100 border border-slate-200 px-3 py-1 rounded-lg">
+            NIRF #<%= college.nirf_rank || 'N/A' %> Engineering 2024
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight"><%= college.name %></h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span class="flex items-center space-x-1">
+            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i>
+            <span><%= college.city %>, <%= college.state %></span>
+          </span>
+          <span>•</span>
+          <span>Established <%= college.established_year || '-' %></span>
+          <span>•</span>
+          <span><%= college.campus_type || 'Residential Campus' %></span>
+        </p>
+      </div>
+
+      <!-- Action: Generator & Website -->
+      <div class="flex items-center space-x-3 self-start lg:self-auto shrink-0">
+        <% if (college.website) { %>
+          <a href="<%= college.website %>" target="_blank" rel="noopener" class="px-4 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-xs font-bold text-slate-700 transition flex items-center space-x-1.5 shadow-2xs">
+            <span>Official Website</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+          </a>
+        <% } %>
+        <a href="/generator" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition flex items-center space-x-1.5">
+          <span>Add to Choice List</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Verified Metrics Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">NIRF Engineering Score</span>
+        <span class="text-xl font-extrabold text-slate-900 font-mono mt-1 block"><%= college.nirf_score ? college.nirf_score.toFixed(2) : 'N/A' %></span>
+        <span class="text-[10px] text-slate-400 block mt-1">Ministry of Education 2024</span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Average CTC Package</span>
+        <span class="text-xl font-extrabold text-slate-900 font-mono mt-1 block"><%= college.average_package_lpa ? '₹' + college.average_package_lpa + ' LPA' : 'N/A' %></span>
+        <span class="text-[10px] text-slate-400 block mt-1">Official Placement Report</span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Highest Package</span>
+        <span class="text-xl font-extrabold text-slate-900 font-mono mt-1 block"><%= college.highest_package_lpa ? '₹' + college.highest_package_lpa + ' LPA' : 'N/A' %></span>
+        <span class="text-[10px] text-slate-400 block mt-1">Domestic &amp; International</span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+        <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Approx. Annual Tuition</span>
+        <span class="text-xl font-extrabold text-slate-900 font-mono mt-1 block"><%= college.annual_fee || 'Per JoSAA norms' %></span>
+        <span class="text-[10px] text-slate-400 block mt-1">Per official fee structure</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Programs Offered (From JoSAA Seat Matrix) -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-8 space-y-4">
+    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900">Academic Programs Offered</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Approved branches participating in official JoSAA counselling</p>
+      </div>
+      <span class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 font-mono">
+        <%= programs.length %> Programs
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+      <% programs.forEach(p => { %>
+        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-blue-300 hover:shadow-xs transition flex items-start justify-between">
+          <div class="min-w-0 pr-2">
+            <h3 class="text-xs font-bold text-slate-900 truncate"><%= p.canonical_name %></h3>
+            <span class="text-[10px] text-slate-400 font-mono block mt-0.5"><%= p.degree %> • <%= p.duration_years %> Years</span>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-700 font-mono shrink-0">
+            ~<%= p.seats %> Seats
+          </span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Cutoff Ranks Archive (Round 5 JoSAA 2024) -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-8 space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900">JoSAA Round 5 Cutoffs Archive</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Official previous-year opening and closing ranks for all categories</p>
+      </div>
+      <div class="text-xs text-slate-500 font-mono bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
+        <%= cutoffs.length %> Cutoff Records
+      </div>
+    </div>
+
+    <div class="overflow-x-auto max-h-[500px] rounded-2xl border border-slate-200">
+      <table class="w-full text-left text-xs border-collapse">
+        <thead class="sticky top-0 bg-slate-900 text-white uppercase text-[10px] font-bold tracking-wider">
+          <tr>
+            <th class="py-3.5 px-4">Program / Branch</th>
+            <th class="py-3.5 px-3 text-center">Quota</th>
+            <th class="py-3.5 px-3 text-center">Category</th>
+            <th class="py-3.5 px-3 text-center">Gender Pool</th>
+            <th class="py-3.5 px-3 text-center">Opening Rank</th>
+            <th class="py-3.5 px-3 text-center">Closing Rank</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 font-sans">
+          <% cutoffs.forEach(co => { %>
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 px-4 font-bold text-slate-900"><%= co.canonical_name %></td>
+              <td class="py-2.5 px-3 text-center font-mono text-slate-700 font-bold">
+                <span class="px-2 py-0.5 rounded bg-slate-100 text-[11px]"><%= co.quota %></span>
+              </td>
+              <td class="py-2.5 px-3 text-center font-semibold text-slate-700"><%= co.seat_type %></td>
+              <td class="py-2.5 px-3 text-center text-slate-500 text-[11px]"><%= co.gender_pool %></td>
+              <td class="py-2.5 px-3 text-center font-mono text-slate-600"><%= co.opening_rank.toLocaleString() %></td>
+              <td class="py-2.5 px-3 text-center font-mono font-extrabold text-slate-900"><%= co.closing_rank.toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>

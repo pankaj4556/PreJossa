@@ -1,0 +1,20 @@
+<%- include('partials/head', { title: '404 - Page Not Found — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-md mx-auto px-4 py-24 text-center space-y-5">
+  <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100 shadow-xs">
+    <i data-lucide="compass" class="w-8 h-8"></i>
+  </div>
+  <div>
+    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Page Not Found</h1>
+    <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto"><%= typeof message !== 'undefined' ? message : "The requested page does not exist or has been moved." %></p>
+  </div>
+  <div class="pt-2">
+    <a href="/" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md transition inline-flex items-center space-x-2">
+      <i data-lucide="home" class="w-4 h-4"></i>
+      <span>Return to Home</span>
+    </a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

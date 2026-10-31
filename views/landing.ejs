@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PreJOSAA — JoSAA Choice Filling & College Explorer</title>
+  <meta name="description" content="Prepare your official JoSAA choice filling sequence in minutes with verified cutoffs, NIRF rankings, and placement statistics for 23 IITs and 31 NITs.">
+  <meta name="theme-color" content="#070d1e">
+
+  <!-- Google Fonts: Space Grotesk, Syne, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            syne: ['Syne', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+              950: '#070d1e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Lenis Recommended CSS */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+    .lenis.lenis-scrolling iframe {
+      pointer-events: none;
+    }
+    body {
+      background-color: #070d1e;
+      color: #f1f5f9;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070d1e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-[#070d1e] text-slate-100 antialiased selection:bg-blue-600 selection:text-white">
+  <!-- React Mount Root -->
+  <div id="landing-root"></div>
+
+  <!-- Initial Stats and Config injected for client use -->
+  <script id="__INITIAL_DATA__" type="application/json">
+    <%- JSON.stringify({ stats: typeof stats !== 'undefined' ? stats : {}, user: typeof user !== 'undefined' ? user : null }) %>
+  </script>
+  <script>
+    window.__INITIAL_DATA__ = JSON.parse(document.getElementById('__INITIAL_DATA__').textContent || '{}');
+  </script>
+
+  <!-- React Landing Bundle -->
+  <script src="/dist/landing.bundle.js"></script>
+</body>
+</html>

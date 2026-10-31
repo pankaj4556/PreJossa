@@ -1,0 +1,51 @@
+{
+  "site": {
+    "name": "PreJOSAA",
+    "port": 3000
+  },
+  "landing": {
+    "introEnabled": true,
+    "showOncePerSession": false,
+    "studentImage": "/images/student.png",
+    "segmentLineOpacity": 0.12,
+    "centerDeadZonePercent": 15,
+    "features": [
+      "NIT & IITs",
+      "NIRF Ranking",
+      "Branches",
+      "Average Placement",
+      "College Explore"
+    ]
+  },
+  "generator": {
+    "dataYear": 2024,
+    "maxChoices": 300,
+    "includeChanceLabels": true
+  },
+  "exports": {
+    "formats": [
+      "pdf",
+      "xlsx",
+      "csv",
+      "docx"
+    ]
+  },
+  "paths": {
+    "database": "./database/database.sqlite"
+  },
+  "admin": {
+    "sessionSecret": "josaa_secure_session_secret_2025"
+  },
+  "payments": {
+    "provider": "upi",
+    "pricePerDownloadInr": 49,
+    "currency": "INR",
+    "upiPayeeName": "Pankaj Kumar",
+    "upiIdNavi": "8000859195@naviaxis",
+    "upiIdPhonepe": "8000859195-oc44@ibl",
+    "upiIdPaytm": "8000859195@ptsbi",
+    "upiId": "8000859195@naviaxis",
+    "keyId": "rzp_test_Ts0RTmsL5QfBuC",
+    "maxDownloadsPerPurchase": 3
+  }
+}

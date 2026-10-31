@@ -1,0 +1,429 @@
+<%- include('partials/head', { title: 'Unlock Choice List Download — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-xl mx-auto px-4 py-12 sm:px-6">
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xl overflow-hidden">
+    
+    <!-- Header Banner -->
+    <div class="px-6 py-5 bg-slate-900 text-white flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-xl bg-blue-600/30 border border-blue-400/40 flex items-center justify-center text-blue-400">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white leading-tight">Unlock Official Choice List</h1>
+          <p class="text-[11px] text-slate-400">Direct UPI Payment • Admin Verified</p>
+        </div>
+      </div>
+      <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">List #<%= choiceListId %></span>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 space-y-5">
+      
+      <!-- Price & Item Summary -->
+      <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-between shadow-xs">
+        <div>
+          <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider block">Single Download Fee</span>
+          <div class="flex items-baseline space-x-1 mt-0.5">
+            <span class="text-3xl font-black text-slate-900 font-mono">₹<%= priceInr %></span>
+            <span class="text-xs text-slate-500 font-medium">only</span>
+          </div>
+        </div>
+        <div class="text-right space-y-1">
+          <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+            All 4 Formats Included
+          </span>
+          <span class="text-[11px] text-slate-600 font-medium block">PDF • Excel • Word • CSV</span>
+        </div>
+      </div>
+
+      <% if (paymentStatus.isUnlocked) { %>
+        <!-- Already Unlocked View -->
+        <div class="text-center py-6 space-y-4">
+          <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
+            <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900">Your Choice List is Unlocked!</h2>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Downloads for this choice list are already purchased and active. Download in any format:</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-3 pt-2 text-xs font-bold">
+            <a href="/api/download/pdf/<%= choiceListId %>" class="p-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <span>Download PDF</span>
+            </a>
+            <a href="/api/download/xlsx/<%= choiceListId %>" class="p-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>Download Excel</span>
+            </a>
+            <a href="/api/download/docx/<%= choiceListId %>" class="p-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="file" class="w-4 h-4"></i>
+              <span>Download Word</span>
+            </a>
+            <a href="/api/download/csv/<%= choiceListId %>" class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="code" class="w-4 h-4"></i>
+              <span>Download CSV</span>
+            </a>
+          </div>
+
+          <div class="pt-3">
+            <a href="/result/<%= choiceListId %>" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+              &larr; Back to On-Screen Choice Editor
+            </a>
+          </div>
+        </div>
+
+      <% } else { %>
+        <!-- Universal UPI Payment Interface (Navi, PhonePe, Paytm, etc.) -->
+        <div id="checkoutState" class="<%= paymentStatus.status === 'pending' ? 'hidden' : 'space-y-5' %>">
+          
+          <!-- Step 1: Select App Tab -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
+                <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                <span>Select Your Payment App</span>
+              </span>
+              <span class="text-[10px] text-slate-400">Scan or Tap to Pay</span>
+            </div>
+
+            <!-- App Tabs -->
+            <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+              <!-- Navi Tab -->
+              <button type="button" class="app-tab active p-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/80 text-emerald-950 flex flex-col items-center justify-center transition shadow-xs cursor-pointer" data-app="navi">
+                <span class="text-xs font-black text-emerald-700">navi</span>
+                <span class="text-[9px] font-medium text-emerald-800 mt-0.5">Navi / GPay</span>
+              </button>
+
+              <!-- PhonePe Tab -->
+              <button type="button" class="app-tab p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-purple-50 text-slate-700 flex flex-col items-center justify-center transition cursor-pointer" data-app="phonepe">
+                <span class="text-xs font-black text-purple-700">PhonePe</span>
+                <span class="text-[9px] font-medium text-slate-500 mt-0.5">UPI / QR</span>
+              </button>
+
+              <!-- Paytm Tab -->
+              <button type="button" class="app-tab p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-sky-50 text-slate-700 flex flex-col items-center justify-center transition cursor-pointer" data-app="paytm">
+                <span class="text-xs font-black text-[#002e6e]">Paytm</span>
+                <span class="text-[9px] font-medium text-slate-500 mt-0.5">Paytm UPI</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic QR & Details Card -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>Amount Auto-Filled &amp; Fixed at ₹<%= priceInr %></span>
+            </div>
+
+            <div class="relative block p-2 bg-white rounded-2xl border border-slate-200 shadow-sm max-w-[210px] mx-auto">
+              <img id="activeQrImage" src="/images/qr-navi.png" alt="Pankaj Kumar UPI QR" class="w-48 h-auto max-h-56 rounded-xl mx-auto block object-contain">
+              <span class="text-[10px] text-slate-400 block mt-1 font-mono font-bold">Auto-fills ₹49 on scan</span>
+            </div>
+
+            <div class="space-y-2 max-w-sm mx-auto">
+              <div class="flex items-center justify-between text-xs px-2 text-slate-600">
+                <span>Payee: <strong id="payeeNameText" class="text-slate-900 font-bold"><%= paymentsConfig.upiPayeeName || 'Pankaj Kumar' %></strong></span>
+                <span>Amount: <strong class="text-blue-600 font-bold">₹<%= priceInr %></strong></span>
+              </div>
+
+              <!-- UPI ID with Copy -->
+              <div class="flex items-center space-x-1.5">
+                <code id="activeUpiIdText" class="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-mono font-bold text-slate-800 flex-1 truncate select-all">8000859195@naviaxis</code>
+                <button type="button" id="copyUpiBtn" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition shrink-0 flex items-center space-x-1 cursor-pointer">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span id="copyUpiBtnText">Copy</span>
+                </button>
+              </div>
+
+              <!-- Direct Mobile Pay Link -->
+              <a id="directPayLink" href="upi://pay?pa=8000859195@naviaxis&pn=Pankaj%20Kumar&am=49&cu=INR&tn=PreJOSAA" class="block w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition text-center">
+                <i data-lucide="external-link" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                <span id="directPayText">Pay ₹49 on Navi / Installed UPI App</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Step 2: Enter UPI UTR for Admin Verification -->
+          <div class="space-y-2.5 pt-2 border-t border-slate-100">
+            <label for="pageUpiUtrInput" class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+              <span class="flex items-center space-x-1.5">
+                <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                <span>Enter 12-Digit UPI UTR / Ref No.</span>
+              </span>
+              <span class="text-[10px] text-slate-400 font-normal lowercase">(from transaction receipt)</span>
+            </label>
+
+            <input type="text" id="pageUpiUtrInput" placeholder="e.g. 428909871234 or Bank UTR" maxlength="30" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm font-mono tracking-wider text-slate-900 placeholder:text-slate-400 placeholder:font-sans uppercase">
+
+            <div id="paymentErrorBox" class="hidden text-xs text-rose-700 bg-rose-50 border border-rose-200 p-3 rounded-xl"></div>
+
+            <!-- Submit UTR Button -->
+            <button type="button" id="pageSubmitUpiBtn" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-blue-500/20 transition flex items-center justify-center space-x-2 cursor-pointer">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span id="pageSubmitBtnText">Submit UTR for Admin Verification</span>
+            </button>
+          </div>
+
+          <div class="text-center text-[10px] text-slate-400 flex items-center justify-center space-x-1">
+            <i data-lucide="shield" class="w-3 h-3 text-slate-400"></i>
+            <span>Secure direct account transfer • Admin verifies every payment at portal</span>
+          </div>
+        </div>
+
+        <!-- State 2: Under Admin Review / Pending State -->
+        <div id="paymentPendingState" class="<%= paymentStatus.status === 'pending' ? 'space-y-4 text-center py-6' : 'space-y-4 text-center py-6 hidden' %>">
+          <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
+            <i data-lucide="clock" class="w-9 h-9 animate-pulse"></i>
+          </div>
+          <div class="space-y-1">
+            <h2 class="text-lg font-bold text-slate-900">Payment Submitted for Verification</h2>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+              Your UPI reference number has been received. Our admin team will verify the payment in the admin portal. Once confirmed, your downloads will unlock automatically.
+            </p>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs font-mono text-slate-700 max-w-sm mx-auto">
+            <span>Submitted UTR: </span>
+            <strong id="pendingUtrDisplay" class="text-slate-900 font-bold"><%= paymentStatus.upiReferenceId || 'Under Admin Verification' %></strong>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <button type="button" id="btnCheckApprovalStatus" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Check Verification Status</span>
+            </button>
+            <button type="button" id="btnReenterUtr" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-semibold transition cursor-pointer">
+              Re-enter UTR
+            </button>
+          </div>
+        </div>
+
+        <!-- State 3: Success Unlocked State (shown once approved) -->
+        <div id="unlockedSuccessState" class="hidden text-center py-6 space-y-4">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+            <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900">Payment Verified Successfully!</h2>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Admin has approved your payment. Your choice list download is now unlocked:</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-3 pt-2 text-xs font-bold">
+            <a href="/api/download/pdf/<%= choiceListId %>" class="p-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <span>Download PDF</span>
+            </a>
+            <a href="/api/download/xlsx/<%= choiceListId %>" class="p-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>Download Excel</span>
+            </a>
+            <a href="/api/download/docx/<%= choiceListId %>" class="p-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="file" class="w-4 h-4"></i>
+              <span>Download Word</span>
+            </a>
+            <a href="/api/download/csv/<%= choiceListId %>" class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white flex items-center justify-center space-x-2 shadow-sm transition">
+              <i data-lucide="code" class="w-4 h-4"></i>
+              <span>Download CSV</span>
+            </a>
+          </div>
+        </div>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const choiceListId = "<%= choiceListId %>";
+  const APP_CONFIG = {
+    navi: {
+      id: 'navi',
+      name: 'Navi UPI',
+      upiId: '8000859195@naviaxis',
+      qrImage: '/images/qr-navi.png',
+      intent: 'upi://pay?pa=8000859195@naviaxis&pn=Pankaj%20Kumar&am=49&cu=INR&tn=PreJOSAA',
+      btnText: 'Pay ₹49 on Navi / Installed UPI App'
+    },
+    phonepe: {
+      id: 'phonepe',
+      name: 'PhonePe',
+      upiId: '8000859195-oc44@ibl',
+      qrImage: '/images/qr-phonepe.png',
+      intent: 'phonepe://pay?pa=8000859195-oc44@ibl&pn=Pankaj%20Kumar&am=49&cu=INR&tn=PreJOSAA',
+      btnText: 'Pay ₹49 on PhonePe App'
+    },
+    paytm: {
+      id: 'paytm',
+      name: 'Paytm',
+      upiId: '8000859195@ptsbi',
+      qrImage: '/images/qr-paytm.png',
+      intent: 'paytmmp://pay?pa=8000859195@ptsbi&pn=Pankaj%20Kumar&am=49&cu=INR&tn=PreJOSAA',
+      btnText: 'Pay ₹49 on Paytm App'
+    }
+  };
+
+  let selectedApp = 'navi';
+  const appTabs = document.querySelectorAll('.app-tab');
+  const activeQrImage = document.getElementById('activeQrImage');
+  const activeUpiIdText = document.getElementById('activeUpiIdText');
+  const directPayLink = document.getElementById('directPayLink');
+  const directPayText = document.getElementById('directPayText');
+  const copyBtn = document.getElementById('copyUpiBtn');
+  const copyBtnText = document.getElementById('copyUpiBtnText');
+
+  const checkoutState = document.getElementById('checkoutState');
+  const paymentPendingState = document.getElementById('paymentPendingState');
+  const unlockedState = document.getElementById('unlockedSuccessState');
+  const pendingUtrDisplay = document.getElementById('pendingUtrDisplay');
+
+  const pageSubmitBtn = document.getElementById('pageSubmitUpiBtn');
+  const pageSubmitBtnText = document.getElementById('pageSubmitBtnText');
+  const pageUtrInput = document.getElementById('pageUpiUtrInput');
+  const errBox = document.getElementById('paymentErrorBox');
+
+  const btnCheckStatus = document.getElementById('btnCheckApprovalStatus');
+  const btnReenter = document.getElementById('btnReenterUtr');
+
+  function showError(msg) {
+    if (errBox) {
+      errBox.textContent = msg;
+      errBox.classList.remove('hidden');
+    }
+  }
+
+  function hideError() {
+    if (errBox) errBox.classList.add('hidden');
+  }
+
+  function switchApp(appKey) {
+    selectedApp = appKey;
+    const config = APP_CONFIG[appKey] || APP_CONFIG.navi;
+
+    if (activeQrImage) activeQrImage.src = config.qrImage;
+    if (activeUpiIdText) activeUpiIdText.textContent = config.upiId;
+    if (directPayLink) directPayLink.href = config.intent;
+    if (directPayText) directPayText.textContent = config.btnText;
+
+    appTabs.forEach(tab => {
+      const isSelected = tab.dataset.app === appKey;
+      tab.classList.toggle('active', isSelected);
+      tab.classList.toggle('border-2', isSelected);
+      tab.classList.toggle('border-emerald-500', isSelected && appKey === 'navi');
+      tab.classList.toggle('border-purple-500', isSelected && appKey === 'phonepe');
+      tab.classList.toggle('border-blue-600', isSelected && appKey === 'paytm');
+      tab.classList.toggle('bg-emerald-50/80', isSelected && appKey === 'navi');
+      tab.classList.toggle('bg-purple-50/80', isSelected && appKey === 'phonepe');
+      tab.classList.toggle('bg-sky-50/80', isSelected && appKey === 'paytm');
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  appTabs.forEach(tab => {
+    tab.addEventListener('click', () => switchApp(tab.dataset.app));
+  });
+
+  if (copyBtn && activeUpiIdText) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(activeUpiIdText.textContent.trim());
+        if (copyBtnText) copyBtnText.textContent = 'Copied!';
+        copyBtn.classList.add('bg-emerald-600');
+        setTimeout(() => {
+          if (copyBtnText) copyBtnText.textContent = 'Copy';
+          copyBtn.classList.remove('bg-emerald-600');
+        }, 2000);
+      } catch (err) {
+        console.warn('Copy failed:', err);
+      }
+    });
+  }
+
+  // Submit UPI UTR
+  if (pageSubmitBtn) {
+    pageSubmitBtn.addEventListener('click', async () => {
+      hideError();
+      const utr = pageUtrInput ? pageUtrInput.value.trim() : '';
+
+      if (!utr || utr.length < 6) {
+        showError('Please enter a valid 12-digit UPI Reference Number / UTR from your receipt.');
+        if (pageUtrInput) pageUtrInput.focus();
+        return;
+      }
+
+      pageSubmitBtn.disabled = true;
+      if (pageSubmitBtnText) pageSubmitBtnText.textContent = 'Submitting to Admin...';
+
+      try {
+        const res = await fetch('/api/payment/verify-upi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            choiceListId: choiceListId,
+            upiReferenceId: utr,
+            upiApp: selectedApp
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          if (data.isUnlocked) {
+            window.location.reload();
+          } else {
+            if (checkoutState) checkoutState.classList.add('hidden');
+            if (paymentPendingState) paymentPendingState.classList.remove('hidden');
+            if (pendingUtrDisplay) pendingUtrDisplay.textContent = utr;
+            if (window.lucide) window.lucide.createIcons();
+          }
+        } else {
+          throw new Error(data.message || 'Payment submission failed.');
+        }
+      } catch (err) {
+        showError(err.message || 'Could not submit payment. Please check your UTR.');
+        pageSubmitBtn.disabled = false;
+        if (pageSubmitBtnText) pageSubmitBtnText.textContent = 'Submit UTR for Admin Verification';
+      }
+    });
+  }
+
+  // Check Status
+  if (btnCheckStatus) {
+    btnCheckStatus.addEventListener('click', async () => {
+      btnCheckStatus.disabled = true;
+      try {
+        const res = await fetch('/api/payment-status/' + choiceListId);
+        const data = await res.json();
+        if (data.isUnlocked || data.status === 'approved') {
+          window.location.reload();
+        } else {
+          alert('Status: Still pending admin review. The admin will verify your payment shortly.');
+        }
+      } catch (e) {
+        alert('Could not check status. Please refresh the page.');
+      } finally {
+        btnCheckStatus.disabled = false;
+      }
+    });
+  }
+
+  // Re-enter
+  if (btnReenter) {
+    btnReenter.addEventListener('click', () => {
+      if (paymentPendingState) paymentPendingState.classList.add('hidden');
+      if (checkoutState) checkoutState.classList.remove('hidden');
+      if (pageSubmitBtn) {
+        pageSubmitBtn.disabled = false;
+        if (pageSubmitBtnText) pageSubmitBtnText.textContent = 'Submit UTR for Admin Verification';
+      }
+      if (pageUtrInput) pageUtrInput.focus();
+    });
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+</script>
+
+<%- include('partials/footer') %>

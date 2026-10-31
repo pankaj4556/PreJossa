@@ -1,0 +1,113 @@
+<%- include('partials/head', { title: 'Data Sources & Methodology — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-4xl mx-auto px-4 py-10 sm:py-14 sm:px-6 space-y-10">
+  
+  <div>
+    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-3">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600"></i>
+      <span>Verified Data Integrity</span>
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Data Sources &amp; Algorithmic Rules</h1>
+    <p class="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
+      PreJOSAA operates under a strict <strong>Zero Fake Data Policy</strong>. Every cutoff, ranking, and placement metric is sourced from official publications and databases with documented years and source links.
+    </p>
+  </div>
+
+  <!-- Real Data Sources Table -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md overflow-hidden p-6 sm:p-8 space-y-5">
+    <div class="border-b border-slate-100 pb-3">
+      <h2 class="text-lg font-bold text-slate-900">Official Primary Sources</h2>
+      <p class="text-xs text-slate-500 mt-0.5">Government agencies and institutional bodies providing authoritative data</p>
+    </div>
+    
+    <div class="space-y-4 text-xs">
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0 border border-blue-100">
+          <i data-lucide="database" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">Opening &amp; Closing Cutoff Ranks</h3>
+          <p class="text-slate-600 mt-1 leading-relaxed">
+            Sourced directly from the official Joint Seat Allocation Authority archive (<a href="https://josaa.nic.in" target="_blank" rel="noopener" class="text-blue-600 underline font-mono">josaa.nic.in</a>). Indexed across Round 1 through Round 5 for all categories, quotas, and gender pools.
+          </p>
+          <span class="text-[10px] font-mono text-slate-400 block mt-1.5">Reporting Year: 2024 Round 5</span>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold shrink-0 border border-indigo-100">
+          <i data-lucide="award" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">NIRF Rankings &amp; Metric Scores</h3>
+          <p class="text-slate-600 mt-1 leading-relaxed">
+            Sourced from the Ministry of Education's National Institutional Ranking Framework official release (<a href="https://www.nirfindia.org" target="_blank" rel="noopener" class="text-blue-600 underline font-mono">nirfindia.org</a>). Engineering category 2024 official edition.
+          </p>
+          <span class="text-[10px] font-mono text-slate-400 block mt-1.5">Reporting Year: 2024 Edition</span>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold shrink-0 border border-emerald-100">
+          <i data-lucide="trending-up" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">Average &amp; Highest Placement CTC Packages</h3>
+          <p class="text-slate-600 mt-1 leading-relaxed">
+            Sourced from official institute training and placement cell annual bulletins, mandatory NIRF Graduation Outcomes submissions, and institute annual reports.
+          </p>
+          <span class="text-[10px] font-mono text-slate-400 block mt-1.5">Reporting Year: 2023-2024 Placement Cycle</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Classification Rules (Safe, Moderate, Ambitious) -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-8 space-y-5">
+    <div class="border-b border-slate-100 pb-3">
+      <h2 class="text-lg font-bold text-slate-900">How 3-Tier Risk Modeling is Calculated</h2>
+      <p class="text-xs text-slate-500 mt-0.5">Objective mathematical formula applied to candidate rank vs historical closing rank</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+      <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2">
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase">Safe Choice</span>
+        <h3 class="font-extrabold text-emerald-950 text-sm">High Likelihood</h3>
+        <p class="text-slate-600 leading-relaxed">
+          The candidate's rank is comfortably better than the historical closing rank (by more than 15%). Strong historical precedent for allotment.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase">Moderate Choice</span>
+        <h3 class="font-extrabold text-amber-950 text-sm">Competitive Range</h3>
+        <p class="text-slate-600 leading-relaxed">
+          The candidate's rank is within ±15% of the previous year's round closing rank. A realistic target requiring strategic placement.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-rose-50/70 border border-rose-200 space-y-2">
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 uppercase">Ambitious Choice</span>
+        <h3 class="font-extrabold text-rose-950 text-sm">Dream / Reach</h3>
+        <p class="text-slate-600 leading-relaxed">
+          The historical closing rank is higher than the candidate's rank (up to 45% stretch). Placed at the top of the choice list with zero penalty.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mandatory Legal Disclaimer -->
+  <div class="p-7 rounded-3xl bg-slate-900 text-white space-y-3 shadow-xl">
+    <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+      <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+      <span>Official JoSAA Legal Disclaimer</span>
+    </div>
+    <p class="text-xs text-slate-300 leading-relaxed">
+      PreJOSAA is an algorithmic decision-support tool created to save JEE students and parents dozens of hours compiling their choice filling sequence. It is not affiliated with the Joint Seat Allocation Authority (JoSAA), CSAB, or the Ministry of Education. It does not replace the official counselling process on josaa.nic.in, nor does it guarantee admission. All choices, modifications, and lockings must be performed by the candidate on the official JoSAA portal before the announced deadlines.
+    </p>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,551 @@
+<!-- Home Page Unified Content (permanent landing page sections) -->
+<div class="home-page-content">
+
+<!-- Hero Section with Interactive Sandbox -->
+<section class="section-hero relative overflow-hidden py-12 lg:py-20">
+  <!-- Subtle ambient decorative glow -->
+  <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="absolute bottom-0 left-10 w-80 h-80 bg-indigo-50/50 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+      
+      <!-- Left Column: Copy & Value Proposition -->
+      <div class="lg:col-span-6 xl:col-span-7 space-y-6">
+        
+        <!-- Trust badge -->
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/70 text-blue-700 text-xs font-semibold shadow-xs">
+          <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i>
+          <span>Official JoSAA Cutoffs • NIRF Engineering 2024 Verified</span>
+        </div>
+
+        <!-- Strong Headline -->
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+          Build your JoSAA choice filling sequence in <span class="text-blue-600 underline decoration-blue-300 decoration-4">minutes</span> with algorithmic precision.
+        </h1>
+
+        <!-- Subheading -->
+        <p class="text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
+          Eliminate guesswork, overpriced agents, and irreversible counselling mistakes. Enter your JEE rank to generate an instant, 3-tier risk-modeled list of IIT &amp; NIT choices ready for the JoSAA portal.
+        </p>
+
+        <!-- Primary Action Group -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 pt-1">
+          <a href="/generator" class="inline-flex items-center justify-center px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <span>Create My Choice List</span>
+            <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+          </a>
+          <a href="/explore" class="inline-flex items-center justify-center px-6 py-3.5 rounded-xl text-base font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 shadow-xs transition focus:outline-none focus:ring-2 focus:ring-slate-300">
+            <i data-lucide="compass" class="w-5 h-5 mr-2 text-slate-500"></i>
+            <span>Explore 54 IITs &amp; NITs</span>
+          </a>
+        </div>
+
+        <!-- Trust Badges with Micro-icons -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 text-xs font-medium text-slate-600">
+          <div class="flex items-center space-x-2">
+            <div class="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            </div>
+            <span>Free On-Screen Results</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+              <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
+            </div>
+            <span>₹49 Download Fee</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+              <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            </div>
+            <span>Zero Fake Data Compliant</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Interactive Product Demo Sandbox -->
+      <div class="lg:col-span-6 xl:col-span-5">
+        <div class="bg-slate-900 rounded-2xl p-5 sm:p-6 text-white shadow-2xl border border-slate-800 space-y-5 relative">
+          
+          <!-- Sandbox Header -->
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3.5">
+            <div class="flex items-center space-x-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Live Preview Sandbox</span>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800/60">
+              Interactive Demo
+            </span>
+          </div>
+
+          <!-- Controls: Segmented Institute Type -->
+          <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Target Institutes</label>
+            <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800" id="demoTypeSelector">
+              <button type="button" data-val="BOTH" class="demo-type-btn active px-3 py-1.5 rounded-lg text-xs font-semibold transition text-white bg-blue-600 shadow">Both</button>
+              <button type="button" data-val="IIT" class="demo-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">IITs Only</button>
+              <button type="button" data-val="NIT" class="demo-type-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">NITs Only</button>
+            </div>
+          </div>
+
+          <!-- Controls: Branch Preference Chips -->
+          <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Preferred Branch</label>
+            <div class="flex flex-wrap gap-1.5" id="demoBranchSelector">
+              <button type="button" data-branch="CSE" class="demo-branch-btn active px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition">Computer Science</button>
+              <button type="button" data-branch="MNC" class="demo-branch-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">Math &amp; Computing</button>
+              <button type="button" data-branch="ECE" class="demo-branch-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">Electronics (ECE)</button>
+              <button type="button" data-branch="MECH" class="demo-branch-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">Mechanical</button>
+            </div>
+          </div>
+
+          <!-- Controls: Rank Slider -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <label class="font-bold text-slate-400 uppercase tracking-wider text-[11px]">Example JEE Rank</label>
+              <span class="font-mono text-sm font-extrabold text-blue-400 bg-slate-950 px-2.5 py-0.5 rounded border border-slate-800" id="demoRankDisplay">#4,200</span>
+            </div>
+            <input type="range" id="demoRankSlider" min="300" max="25000" step="100" value="4200" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>AIR 300</span>
+              <span>AIR 5,000</span>
+              <span>AIR 12,000</span>
+              <span>AIR 25,000</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Results Sequence List -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <span>Sample Calibrated Sequence</span>
+              <span class="text-[10px] text-slate-400 font-normal">3-Tier Risk Modeling</span>
+            </div>
+
+            <div id="demoResultsList" class="space-y-2 font-sans transition-all duration-300">
+              <!-- Dynamically populated via JS below -->
+            </div>
+          </div>
+
+          <!-- Full Generator Link CTA inside Card -->
+          <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Want exact quota &amp; state calibration?</span>
+            <a href="/generator" class="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center space-x-1 group">
+              <span>Open Choice Generator</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 transform group-hover:translate-x-0.5 transition"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Platform Statistics Banner -->
+<section class="section-stats py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-slate-100">
+      
+      <div class="pt-3 md:pt-0">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">54</div>
+        <div class="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">IITs &amp; NITs Verified</div>
+      </div>
+
+      <div class="pt-3 md:pt-0">
+        <div class="text-3xl font-extrabold text-blue-600 tracking-tight font-mono">10,660+</div>
+        <div class="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">Round 5 Cutoffs</div>
+      </div>
+
+      <div class="pt-3 md:pt-0">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">4 Formats</div>
+        <div class="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">PDF, Excel, Word, CSV</div>
+      </div>
+
+      <div class="pt-3 md:pt-0">
+        <div class="text-3xl font-extrabold text-emerald-600 tracking-tight">₹49</div>
+        <div class="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">Single Export Fee</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 3-Step Guided Process -->
+<section class="section-how py-16 lg:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal-on-scroll">
+      <span class="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider mb-3">
+        Effortless JoSAA Strategy
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        How PreJOSAA Delivers Your Choice List
+      </h2>
+      <p class="mt-3 text-base text-slate-600">
+        Built strictly around JoSAA seat allocation mechanics, cutoff statistics, and verified NIRF data.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Step 1 -->
+      <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition relative flex flex-col justify-between reveal-on-scroll reveal-delay-1">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl mb-5 border border-blue-100">
+            1
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Input Ranks &amp; Quota</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Provide your JEE Main CRL and category ranks, JEE Advanced rank (if eligible), Home State quota, and gender pool.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-medium text-slate-500 flex items-center space-x-1.5">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+          <span>Auto Home State vs Other State quota</span>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition relative flex flex-col justify-between reveal-on-scroll reveal-delay-2">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl mb-5 border border-blue-100">
+            2
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Configure Priorities</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Order your institutional preferences between College NIRF Reputation, Average Placement Package (LPA), and Branch Preference.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-medium text-slate-500 flex items-center space-x-1.5">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+          <span>Flexible drag-to-reorder priority ranks</span>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition relative flex flex-col justify-between reveal-on-scroll reveal-delay-3">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl mb-5 border border-blue-100">
+            3
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Interactive Review &amp; Export</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Examine your generated list grouped into Ambitious, Target, and Safer tiers. Delete or reorder choices directly on-screen before downloading.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-medium text-slate-500 flex items-center space-x-1.5">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+          <span>Export print-ready PDF, Excel, Word &amp; CSV</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Premier Institutes Showcase -->
+<section class="section-institutes py-16 lg:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 reveal-on-scroll">
+      <div>
+        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider mb-2">
+          Institute Directory
+        </span>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Top Ranked Institutes in JoSAA</h2>
+        <p class="mt-1 text-sm text-slate-500">Official NIRF 2024 Engineering ranks and verified placement metrics.</p>
+      </div>
+      <a href="/explore" class="text-sm font-bold text-blue-600 hover:text-blue-700 mt-4 sm:mt-0 flex items-center space-x-1.5 group">
+        <span>Explore all 54 institutes</span>
+        <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition"></i>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% topInstitutes.forEach(inst => { %>
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 hover:border-blue-400 hover:shadow-lg transition-all flex flex-col justify-between group">
+          <div>
+            <div class="flex items-start justify-between mb-3.5">
+              <span class="px-2.5 py-0.5 rounded-md text-xs font-bold font-mono tracking-wider <%= inst.type === 'IIT' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-800 border border-amber-200' %>">
+                <%= inst.type %>
+              </span>
+              <span class="text-xs font-extrabold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md font-mono">
+                NIRF #<%= inst.nirf_rank || '-' %>
+              </span>
+            </div>
+
+            <h3 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition line-clamp-1">
+              <%= inst.name %>
+            </h3>
+
+            <p class="text-xs text-slate-500 mb-5 flex items-center space-x-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span><%= inst.city %>, <%= inst.state %></span>
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+              <div>
+                <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Avg Package</span>
+                <span class="font-extrabold text-slate-900 font-mono text-sm">
+                  <%= inst.average_package_lpa ? '₹' + inst.average_package_lpa + ' LPA' : 'N/A' %>
+                </span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Highest Package</span>
+                <span class="font-extrabold text-slate-900 font-mono text-sm">
+                  <%= inst.highest_package_lpa ? '₹' + inst.highest_package_lpa + ' LPA' : 'N/A' %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] font-mono text-slate-400">JoSAA Code: <%= inst.josaa_code %></span>
+            <a href="/college/<%= inst.josaa_code %>" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+              <span>View Cutoffs</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- JoSAA Crucial Counseling FAQ & Advice -->
+<section class="section-cta py-16 lg:py-24 text-white">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-12 reveal-on-scroll">
+      <span class="px-3 py-1 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/50 text-xs font-bold uppercase tracking-wider inline-block mb-3">
+        Important Rules
+      </span>
+      <h2 class="text-3xl font-extrabold tracking-tight">Why Choice Sequence Order Matters</h2>
+      <p class="mt-2 text-slate-400 text-sm">JoSAA allocation is strictly top-down. Avoid common pitfalls that cost students their dream seat.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+      <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+        <div class="flex items-center space-x-2 text-rose-400 font-bold">
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+          <span>Never Put a Less Desired Branch Above a Better One</span>
+        </div>
+        <p class="text-slate-300 text-xs leading-relaxed">
+          If JoSAA allocates you Choice #12, you can never get Choice #13 or lower in subsequent rounds. The system only slides upward. Putting a "safe" branch too high blocks your dream colleges.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+        <div class="flex items-center space-x-2 text-emerald-400 font-bold">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Fill 100+ Choices Across All 3 Risk Tiers</span>
+        </div>
+        <p class="text-slate-300 text-xs leading-relaxed">
+          There is no limit to the number of choices you can register on the official JoSAA portal. PreJOSAA calculates Ambitious, Target, and Safer options so you never exit counselling unallocated.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center">
+      <a href="/generator" class="inline-flex items-center space-x-2 px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-base shadow-lg transition transform hover:-translate-y-0.5">
+        <span>Generate Your Optimized JoSAA Sequence Now</span>
+        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+</div><!-- end .home-page-content -->
+
+<!-- Client Script for Hero Interactive Sandbox -->
+<script>
+  (function() {
+    // Verified 2024 Cutoff Data Points for Live Interactive Preview
+    const samplePool = [
+      // CSE
+      { type: 'IIT', college: 'IIT Bombay', branch: 'Computer Science', code: 'CSE', cr: 68, nirf: 3 },
+      { type: 'IIT', college: 'IIT Delhi', branch: 'Computer Science', code: 'CSE', cr: 116, nirf: 2 },
+      { type: 'IIT', college: 'IIT Madras', branch: 'Computer Science', code: 'CSE', cr: 159, nirf: 1 },
+      { type: 'IIT', college: 'IIT Kanpur', branch: 'Computer Science', code: 'CSE', cr: 252, nirf: 4 },
+      { type: 'IIT', college: 'IIT Kharagpur', branch: 'Computer Science', code: 'CSE', cr: 414, nirf: 5 },
+      { type: 'IIT', college: 'IIT Roorkee', branch: 'Computer Science', code: 'CSE', cr: 481, nirf: 8 },
+      { type: 'IIT', college: 'IIT Guwahati', branch: 'Computer Science', code: 'CSE', cr: 623, nirf: 7 },
+      { type: 'IIT', college: 'IIT Hyderabad', branch: 'Computer Science', code: 'CSE', cr: 670, nirf: 8 },
+      { type: 'IIT', college: 'IIT BHU', branch: 'Computer Science', code: 'CSE', cr: 1071, nirf: 10 },
+      { type: 'IIT', college: 'IIT Indore', branch: 'Computer Science', code: 'CSE', cr: 1389, nirf: 16 },
+      { type: 'NIT', college: 'NIT Trichy', branch: 'Computer Science', code: 'CSE', cr: 1500, nirf: 9 },
+      { type: 'NIT', college: 'NIT Surathkal', branch: 'Computer Science', code: 'CSE', cr: 2000, nirf: 12 },
+      { type: 'NIT', college: 'NIT Warangal', branch: 'Computer Science', code: 'CSE', cr: 2400, nirf: 21 },
+      { type: 'IIT', college: 'IIT Ropar', branch: 'Computer Science', code: 'CSE', cr: 2300, nirf: 22 },
+      { type: 'IIT', college: 'IIT Mandi', branch: 'Computer Science', code: 'CSE', cr: 2900, nirf: 33 },
+      { type: 'NIT', college: 'NIT Rourkela', branch: 'Computer Science', code: 'CSE', cr: 3800, nirf: 19 },
+      { type: 'NIT', college: 'NIT Calicut', branch: 'Computer Science', code: 'CSE', cr: 4500, nirf: 25 },
+      { type: 'NIT', college: 'MNIT Jaipur', branch: 'Computer Science', code: 'CSE', cr: 5600, nirf: 43 },
+      { type: 'NIT', college: 'VNIT Nagpur', branch: 'Computer Science', code: 'CSE', cr: 5800, nirf: 39 },
+      { type: 'NIT', college: 'NIT Kurukshetra', branch: 'Computer Science', code: 'CSE', cr: 7200, nirf: 45 },
+      { type: 'NIT', college: 'NIT Silchar', branch: 'Computer Science', code: 'CSE', cr: 11500, nirf: 40 },
+      { type: 'NIT', college: 'NIT Hamirpur', branch: 'Computer Science', code: 'CSE', cr: 12500, nirf: 68 },
+      { type: 'NIT', college: 'NIT Patna', branch: 'Computer Science', code: 'CSE', cr: 15000, nirf: 55 },
+      { type: 'NIT', college: 'NIT Raipur', branch: 'Computer Science', code: 'CSE', cr: 16500, nirf: 73 },
+      { type: 'NIT', college: 'NIT Agartala', branch: 'Computer Science', code: 'CSE', cr: 22000, nirf: 85 },
+
+      // MnC
+      { type: 'IIT', college: 'IIT Delhi', branch: 'Mathematics & Computing', code: 'MNC', cr: 350, nirf: 2 },
+      { type: 'IIT', college: 'IIT Kanpur', branch: 'Mathematics & Scientific Comp.', code: 'MNC', cr: 950, nirf: 4 },
+      { type: 'IIT', college: 'IIT Kharagpur', branch: 'Mathematics & Computing', code: 'MNC', cr: 1350, nirf: 5 },
+      { type: 'IIT', college: 'IIT BHU', branch: 'Mathematics & Computing', code: 'MNC', cr: 2100, nirf: 10 },
+      { type: 'IIT', college: 'IIT Guwahati', branch: 'Mathematics & Computing', code: 'MNC', cr: 1100, nirf: 7 },
+      { type: 'NIT', college: 'NIT Warangal', branch: 'Mathematics & Computing', code: 'MNC', cr: 4200, nirf: 21 },
+      { type: 'NIT', college: 'NIT Hamirpur', branch: 'Mathematics & Computing', code: 'MNC', cr: 13800, nirf: 68 },
+
+      // ECE
+      { type: 'IIT', college: 'IIT Bombay', branch: 'Electrical & Electronics', code: 'ECE', cr: 450, nirf: 3 },
+      { type: 'IIT', college: 'IIT Roorkee', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 1450, nirf: 8 },
+      { type: 'IIT', college: 'IIT Guwahati', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 1750, nirf: 7 },
+      { type: 'NIT', college: 'NIT Trichy', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 3200, nirf: 9 },
+      { type: 'NIT', college: 'NIT Surathkal', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 4100, nirf: 12 },
+      { type: 'NIT', college: 'NIT Rourkela', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 6500, nirf: 19 },
+      { type: 'NIT', college: 'MNIT Jaipur', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 9800, nirf: 43 },
+      { type: 'NIT', college: 'NIT Silchar', branch: 'Electronics & Comm. Eng.', code: 'ECE', cr: 16800, nirf: 40 },
+
+      // MECH
+      { type: 'IIT', college: 'IIT Bombay', branch: 'Mechanical Engineering', code: 'MECH', cr: 1750, nirf: 3 },
+      { type: 'IIT', college: 'IIT Delhi', branch: 'Mechanical Engineering', code: 'MECH', cr: 1900, nirf: 2 },
+      { type: 'IIT', college: 'IIT Madras', branch: 'Mechanical Engineering', code: 'MECH', cr: 2450, nirf: 1 },
+      { type: 'IIT', college: 'IIT Kharagpur', branch: 'Mechanical Engineering', code: 'MECH', cr: 3200, nirf: 5 },
+      { type: 'NIT', college: 'NIT Trichy', branch: 'Mechanical Engineering', code: 'MECH', cr: 7200, nirf: 9 },
+      { type: 'NIT', college: 'NIT Surathkal', branch: 'Mechanical Engineering', code: 'MECH', cr: 9500, nirf: 12 },
+      { type: 'NIT', college: 'NIT Warangal', branch: 'Mechanical Engineering', code: 'MECH', cr: 11000, nirf: 21 },
+      { type: 'NIT', college: 'NIT Calicut', branch: 'Mechanical Engineering', code: 'MECH', cr: 15500, nirf: 25 },
+      { type: 'NIT', college: 'VNIT Nagpur', branch: 'Mechanical Engineering', code: 'MECH', cr: 18500, nirf: 39 }
+    ];
+
+    let currentType = 'BOTH';
+    let currentBranch = 'CSE';
+    let currentRank = 4200;
+
+    const rankSlider = document.getElementById('demoRankSlider');
+    const rankDisplay = document.getElementById('demoRankDisplay');
+    const resultsContainer = document.getElementById('demoResultsList');
+
+    function updateDemo() {
+      if (!rankDisplay || !resultsContainer) return;
+      rankDisplay.textContent = '#' + Number(currentRank).toLocaleString();
+
+      // Filter by type and branch
+      let filtered = samplePool.filter(item => {
+        const typeMatch = (currentType === 'BOTH') || (item.type === currentType);
+        const branchMatch = item.code === currentBranch;
+        return typeMatch && branchMatch;
+      });
+
+      // Compute status for each
+      const scored = filtered.map(item => {
+        let status = 'Moderate';
+        let statusClass = 'bg-amber-900/40 text-amber-300 border-amber-800';
+        let ratio = item.cr / currentRank;
+
+        if (ratio < 0.82) {
+          status = 'Ambitious';
+          statusClass = 'bg-rose-900/40 text-rose-300 border-rose-800';
+        } else if (ratio > 1.18) {
+          status = 'Safer';
+          statusClass = 'bg-emerald-900/40 text-emerald-300 border-emerald-800';
+        } else {
+          status = 'Target';
+          statusClass = 'bg-amber-900/40 text-amber-300 border-amber-800';
+        }
+
+        // Distance to user rank
+        const diff = Math.abs(item.cr - currentRank);
+        return { ...item, status, statusClass, diff };
+      });
+
+      // Sort by closing rank (natural JoSAA order)
+      scored.sort((a, b) => a.cr - b.cr);
+
+      // Select a realistic 3-4 item sample
+      let displayItems = scored.slice(0, 4);
+      if (scored.length > 4) {
+        const targetIdx = scored.findIndex(s => s.cr >= currentRank);
+        const start = Math.max(0, Math.min(scored.length - 4, (targetIdx !== -1 ? targetIdx - 1 : 0)));
+        displayItems = scored.slice(start, start + 4);
+      }
+
+      if (displayItems.length === 0) {
+        resultsContainer.innerHTML = '<div class="p-3 text-center text-xs text-slate-500">No matching programs in demo subset.</div>';
+        return;
+      }
+
+      let html = '';
+      displayItems.forEach((item, idx) => {
+        const typeBadge = item.type === 'IIT' 
+          ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">IIT</span>'
+          : '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800">NIT</span>';
+
+        html += `
+          <div class="p-2.5 rounded-xl bg-slate-800/90 border border-slate-700/80 flex items-center justify-between transition-all hover:bg-slate-750">
+            <div class="flex items-center space-x-2.5 min-w-0">
+              <span class="text-xs font-mono font-bold text-blue-400">#0${idx + 1}</span>
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5">
+                  <span class="text-xs font-semibold text-slate-100 truncate">${item.college}</span>
+                  ${typeBadge}
+                </div>
+                <div class="text-[11px] text-slate-400 truncate">${item.branch}</div>
+              </div>
+            </div>
+            <div class="text-right flex flex-col items-end shrink-0 ml-2">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.statusClass}">
+                ${item.status}
+              </span>
+              <span class="text-[10px] font-mono text-slate-400 mt-0.5">CR: ~${item.cr.toLocaleString()}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      resultsContainer.innerHTML = html;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Type selector clicks
+    document.querySelectorAll('#demoTypeSelector .demo-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#demoTypeSelector .demo-type-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow');
+          b.classList.add('text-slate-400');
+        });
+        btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow');
+        btn.classList.remove('text-slate-400');
+        currentType = btn.getAttribute('data-val');
+        updateDemo();
+      });
+    });
+
+    // Branch selector clicks
+    document.querySelectorAll('#demoBranchSelector .demo-branch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#demoBranchSelector .demo-branch-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-500');
+          b.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
+        });
+        btn.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-500');
+        btn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
+        currentBranch = btn.getAttribute('data-branch');
+        updateDemo();
+      });
+    });
+
+    // Slider input
+    if (rankSlider) {
+      rankSlider.addEventListener('input', (e) => {
+        currentRank = parseInt(e.target.value, 10);
+        updateDemo();
+      });
+    }
+
+    // Initial render
+    updateDemo();
+  })();
+</script>

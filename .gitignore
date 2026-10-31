@@ -1,0 +1,25 @@
+# === Secrets — NEVER commit these ===
+.env
+.env.local
+.env.*.local
+
+# === Node ===
+node_modules/
+npm-debug.log*
+
+# === Database (contains user + payment data) ===
+*.db
+*.sqlite
+*.sqlite3
+
+# === User file uploads ===
+storage/
+
+# === Build output ===
+public/dist/
+
+# === OS / Editor ===
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

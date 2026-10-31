@@ -1,0 +1,148 @@
+<%- include('partials/head', { title: 'NIRF Engineering Rankings 2024 — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8 space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-2.5">
+        <i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i>
+        <span>Ministry of Education Official 2024 Release</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">NIRF Engineering Rankings 2024</h1>
+      <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+        Official National Institutional Ranking Framework (NIRF) standings for all 23 IITs and 31 NITs with verified placement packages and official source references.
+      </p>
+    </div>
+
+    <!-- Quick Filter Controls -->
+    <div class="flex items-center space-x-2 self-start sm:self-auto">
+      <div class="flex rounded-xl border border-slate-200 p-1 bg-slate-50 text-xs font-bold" id="nirfTypeTabs">
+        <button type="button" class="px-3 py-1.5 rounded-lg bg-white shadow-xs text-blue-700 transition" onclick="filterNirf('ALL', this)">All</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition" onclick="filterNirf('IIT', this)">IITs Only</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition" onclick="filterNirf('NIT', this)">NITs Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search input -->
+  <div class="relative max-w-md">
+    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+      <i data-lucide="search" class="w-4 h-4"></i>
+    </div>
+    <input type="text" id="nirfSearch" placeholder="Filter by institute name or city..."
+           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white">
+  </div>
+
+  <!-- Rankings Table -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs border-collapse" id="nirfTable">
+        <thead class="bg-slate-900 text-white uppercase text-[10px] font-bold tracking-wider">
+          <tr>
+            <th class="py-3.5 px-4 text-center w-16">NIRF Rank</th>
+            <th class="py-3.5 px-4">Institute</th>
+            <th class="py-3.5 px-3 text-center">Type</th>
+            <th class="py-3.5 px-4">Location</th>
+            <th class="py-3.5 px-3 text-center">NIRF Score</th>
+            <th class="py-3.5 px-3 text-center">Avg Package</th>
+            <th class="py-3.5 px-3 text-center">Verification Source</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100" id="nirfTableBody">
+          <% rankings.forEach(r => { %>
+            <tr class="nirf-row hover:bg-slate-50/80 transition" data-type="<%= r.type %>" data-name="<%= r.name.toLowerCase() %> <%= r.city.toLowerCase() %>">
+              
+              <!-- Rank with Top 1-10 Badges -->
+              <td class="py-3.5 px-4 text-center">
+                <% if (r.nirf_rank === 1) { %>
+                  <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-800 font-extrabold font-mono text-xs border border-amber-300 shadow-2xs">#1</span>
+                <% } else if (r.nirf_rank === 2) { %>
+                  <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-800 font-extrabold font-mono text-xs border border-slate-300 shadow-2xs">#2</span>
+                <% } else if (r.nirf_rank === 3) { %>
+                  <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-50 text-amber-900 font-extrabold font-mono text-xs border border-amber-200 shadow-2xs">#3</span>
+                <% } else if (r.nirf_rank <= 10) { %>
+                  <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold font-mono text-xs border border-blue-200">#<%= r.nirf_rank %></span>
+                <% } else { %>
+                  <span class="font-bold text-slate-700 font-mono text-xs">#<%= r.nirf_rank %></span>
+                <% } %>
+              </td>
+
+              <!-- Institute Name -->
+              <td class="py-3.5 px-4 font-bold text-slate-900">
+                <a href="/college/<%= r.josaa_code %>" class="hover:text-blue-600 transition flex items-center space-x-2 group">
+                  <span class="group-hover:underline"><%= r.name %></span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-600"></i>
+                </a>
+              </td>
+
+              <!-- Type -->
+              <td class="py-3.5 px-3 text-center">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold <%= r.type === 'IIT' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-800 border border-amber-200' %>">
+                  <%= r.type %>
+                </span>
+              </td>
+
+              <!-- Location -->
+              <td class="py-3.5 px-4 text-slate-500 font-medium">
+                <%= r.city %>, <%= r.state %>
+              </td>
+
+              <!-- NIRF Score -->
+              <td class="py-3.5 px-3 text-center font-mono font-extrabold text-slate-800">
+                <%= r.nirf_score ? r.nirf_score.toFixed(2) : 'N/A' %>
+              </td>
+
+              <!-- Avg Package -->
+              <td class="py-3.5 px-3 text-center font-mono font-extrabold text-slate-900">
+                <%= r.average_package_lpa ? '₹' + r.average_package_lpa + ' LPA' : 'N/A' %>
+              </td>
+
+              <!-- Source Link -->
+              <td class="py-3.5 px-3 text-center">
+                <a href="<%= r.source_url || 'https://www.nirfindia.org' %>" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 text-[11px] font-bold inline-flex items-center space-x-1">
+                  <span>nirfindia.org</span>
+                  <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeNirfType = 'ALL';
+  function filterNirf(type, btn) {
+    activeNirfType = type;
+    document.querySelectorAll('#nirfTypeTabs button').forEach(b => {
+      b.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
+    });
+    btn.className = 'px-3 py-1.5 rounded-lg bg-white shadow-xs text-blue-700 transition';
+    applyFilters();
+  }
+
+  const searchInput = document.getElementById('nirfSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  function applyFilters() {
+    const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+    const rows = document.querySelectorAll('.nirf-row');
+    rows.forEach(row => {
+      const typeMatch = (activeNirfType === 'ALL') || (row.dataset.type === activeNirfType);
+      const searchMatch = !q || row.dataset.name.includes(q);
+      if (typeMatch && searchMatch) {
+        row.classList.remove('hidden');
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+  }
+</script>
+
+<%- include('partials/footer') %>

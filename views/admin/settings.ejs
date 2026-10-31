@@ -1,0 +1,119 @@
+<%- include('../partials/head', { title: 'Admin Settings' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-bold">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+        </div>
+        <span class="font-bold text-slate-100 tracking-tight">PreJOSAA Admin</span>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold">
+        <a href="<%= adminRoutePath %>" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Dashboard</a>
+        <a href="<%= adminRoutePath %>/payments" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Payment History</a>
+        <a href="<%= adminRoutePath %>/audit" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Data Audit</a>
+        <a href="<%= adminRoutePath %>/imports" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">CSV Imports</a>
+        <a href="<%= adminRoutePath %>/settings" class="px-3 py-1.5 rounded-lg bg-slate-800 text-sky-400">Settings</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="text-slate-400">Admin: <strong class="text-slate-200"><%= admin.username %></strong></span>
+        <a href="<%= adminRoutePath %>/logout" class="px-3 py-1.5 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/50 transition">Log Out</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">System Settings & Configuration</h1>
+      <p class="text-xs text-slate-400 mt-1">Manage payment amounts, UPI configuration, and interactive landing page toggles.</p>
+    </div>
+
+    <% if (saved) { %>
+      <div class="p-3 rounded-xl bg-emerald-900/40 border border-emerald-800 text-emerald-200 text-xs flex items-center space-x-2">
+        <i data-lucide="check" class="w-4 h-4"></i>
+        <span>Settings successfully updated and saved to config.json.</span>
+      </div>
+    <% } %>
+
+    <form method="POST" action="<%= adminRoutePath %>/settings" class="bg-slate-800 rounded-2xl border border-slate-700 p-6 space-y-6 text-xs">
+      
+      <!-- General Settings -->
+      <div class="space-y-4">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700 pb-2">General Settings</h2>
+        
+        <div>
+          <label for="siteName" class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Site Name</label>
+          <input type="text" id="siteName" name="siteName" value="<%= config.site.name %>" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-2 focus:ring-sky-500">
+        </div>
+      </div>
+
+      <!-- Payment Settings (UPI & Razorpay) -->
+      <div class="space-y-4">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700 pb-2">UPI &amp; Payment Settings (Pankaj Kumar)</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="pricePerDownload" class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Price Per Download (INR)</label>
+            <input type="number" id="pricePerDownload" name="pricePerDownload" value="<%= config.payments.pricePerDownloadInr || 49 %>" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono text-white focus:ring-2 focus:ring-sky-500">
+          </div>
+
+          <div>
+            <label for="upiPayeeName" class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Payee Name</label>
+            <input type="text" id="upiPayeeName" name="upiPayeeName" value="<%= config.payments.upiPayeeName || 'Pankaj Kumar' %>" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-2 focus:ring-sky-500">
+          </div>
+
+          <div>
+            <label for="upiIdNavi" class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Navi UPI ID</label>
+            <input type="text" id="upiIdNavi" name="upiIdNavi" value="<%= config.payments.upiIdNavi || '8000859195@naviaxis' %>" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono text-white focus:ring-2 focus:ring-sky-500">
+          </div>
+
+          <div>
+            <label for="upiIdPhonepe" class="block font-bold text-slate-300 uppercase tracking-wider mb-1">PhonePe UPI ID</label>
+            <input type="text" id="upiIdPhonepe" name="upiIdPhonepe" value="<%= config.payments.upiIdPhonepe || '8000859195-oc44@ibl' %>" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono text-white focus:ring-2 focus:ring-sky-500">
+          </div>
+
+          <div>
+            <label for="upiIdPaytm" class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Paytm UPI ID</label>
+            <input type="text" id="upiIdPaytm" name="upiIdPaytm" value="<%= config.payments.upiIdPaytm || '8000859195@ptsbi' %>" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono text-white focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Landing Page Intro Settings (PRD 7) -->
+      <div class="space-y-4">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700 pb-2">Temporary Landing Page Options</h2>
+
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900 border border-slate-700 cursor-pointer">
+          <input type="checkbox" name="introEnabled" <%= config.landing.introEnabled ? 'checked' : '' %> class="mt-0.5 rounded bg-slate-800 border-slate-600 text-sky-600 focus:ring-sky-500">
+          <div>
+            <span class="font-bold text-slate-200 block text-xs">Enable Temporary Landing Page (Intro Knob)</span>
+            <span class="text-slate-400 text-[11px]">When enabled, visitors see the 5-segment concentric circle interactive screen before scrolling to home.</span>
+          </div>
+        </label>
+
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900 border border-slate-700 cursor-pointer">
+          <input type="checkbox" name="showOncePerSession" <%= config.landing.showOncePerSession ? 'checked' : '' %> class="mt-0.5 rounded bg-slate-800 border-slate-600 text-sky-600 focus:ring-sky-500">
+          <div>
+            <span class="font-bold text-slate-200 block text-xs">Show Once Per Session Only</span>
+            <span class="text-slate-400 text-[11px]">Once dismissed or scrolled past, subsequent page visits directly load the permanent site.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="pt-4 border-t border-slate-700 flex justify-end">
+        <button type="submit" class="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow transition">
+          Save Settings
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script>
+  if (window.lucide) window.lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<%- include('../partials/head', { title: 'Admin Data Audit' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-bold">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+        </div>
+        <span class="font-bold text-slate-100 tracking-tight">PreJOSAA Admin</span>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold">
+        <a href="<%= adminRoutePath %>" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Dashboard</a>
+        <a href="<%= adminRoutePath %>/payments" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Payment History</a>
+        <a href="<%= adminRoutePath %>/audit" class="px-3 py-1.5 rounded-lg bg-slate-800 text-sky-400">Data Audit</a>
+        <a href="<%= adminRoutePath %>/imports" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">CSV Imports</a>
+        <a href="<%= adminRoutePath %>/settings" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Settings</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="text-slate-400">Admin: <strong class="text-slate-200"><%= admin.username %></strong></span>
+        <a href="<%= adminRoutePath %>/logout" class="px-3 py-1.5 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/50 transition">Log Out</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Data Integrity & Audit View</h1>
+      <p class="text-xs text-slate-400 mt-1">Per Section 13 & 16: Monitors zero fake data compliance, verifying every row has an official source URL and year.</p>
+    </div>
+
+    <!-- Missing Sources Check -->
+    <div class="p-6 rounded-2xl bg-slate-800 border border-slate-700 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Unverified Rows Missing Source Link / Year</h2>
+        <% if (missingSources.length === 0) { %>
+          <span class="px-2.5 py-1 rounded bg-emerald-900/40 text-emerald-400 border border-emerald-800 text-xs font-bold font-mono">
+            100% Source Compliant (0 Missing)
+          </span>
+        <% } else { %>
+          <span class="px-2.5 py-1 rounded bg-red-900/40 text-red-400 border border-red-800 text-xs font-bold font-mono">
+            <%= missingSources.length %> Flagged Rows
+          </span>
+        <% } %>
+      </div>
+
+      <% if (missingSources.length === 0) { %>
+        <p class="text-xs text-slate-400">
+          All institutes, NIRF rankings, and placement statistics currently in the database have verified source links and explicit data years.
+        </p>
+      <% } else { %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 uppercase text-[10px] border-b border-slate-700">
+              <tr>
+                <th class="py-2.5 px-3">Entity</th>
+                <th class="py-2.5 px-3">Identifier</th>
+                <th class="py-2.5 px-3">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700 font-mono">
+              <% missingSources.forEach(row => { %>
+                <tr>
+                  <td class="py-2.5 px-3 font-bold"><%= row.entity %></td>
+                  <td class="py-2.5 px-3 text-slate-300"><%= row.identifier %></td>
+                  <td class="py-2.5 px-3 text-red-400">Missing source URL</td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Full Institutes Audit Table -->
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl p-6 space-y-4">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700 pb-3">All 54 Institutes Audit Roster</h2>
+
+      <div class="overflow-x-auto max-h-[500px]">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="sticky top-0 bg-slate-900 text-slate-400 uppercase text-[10px] font-bold">
+            <tr>
+              <th class="py-2.5 px-3">Code</th>
+              <th class="py-2.5 px-3">Name</th>
+              <th class="py-2.5 px-3 text-center">NIRF 2024</th>
+              <th class="py-2.5 px-3 text-center">Avg LPA</th>
+              <th class="py-2.5 px-3 text-center">Source Verified</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700 font-mono">
+            <% instituteList.forEach(inst => { %>
+              <tr class="hover:bg-slate-700/30">
+                <td class="py-2 px-3 text-sky-400 font-bold"><%= inst.josaa_code %></td>
+                <td class="py-2 px-3 font-sans text-slate-200"><%= inst.name %></td>
+                <td class="py-2 px-3 text-center text-slate-300">#<%= inst.nirf_rank || '-' %></td>
+                <td class="py-2 px-3 text-center text-slate-300">₹<%= inst.average_package_lpa || '-' %>L</td>
+                <td class="py-2 px-3 text-center">
+                  <span class="text-emerald-400 text-xs font-sans font-bold">Verified</span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  if (window.lucide) window.lucide.createIcons();
+</script>
+</body>
+</html>

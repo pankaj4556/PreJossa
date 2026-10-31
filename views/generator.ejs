@@ -1,0 +1,394 @@
+<%- include('partials/head', { title: 'Choice Generator — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-4xl mx-auto px-4 py-10 sm:py-14 sm:px-6">
+  
+  <!-- Stepper Page Header -->
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-3">
+      <i data-lucide="sliders" class="w-3.5 h-3.5 text-blue-600"></i>
+      <span>Algorithmic JoSAA Choice Builder</span>
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+      Generate Your JoSAA Choice List
+    </h1>
+    <p class="mt-2.5 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
+      Calculates an optimal, sequence-ranked choice filling sequence using official 2024 Round 5 closing ranks and your custom priorities.
+    </p>
+  </div>
+
+  <!-- Step Progress Indicator -->
+  <div class="mb-10 max-w-2xl mx-auto">
+    <div class="flex items-center justify-between relative">
+      <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full -z-0"></div>
+      <div id="stepProgressLine" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-blue-600 rounded-full transition-all duration-300 -z-0" style="width: 0%;"></div>
+
+      <!-- Step 1 Indicator -->
+      <button type="button" class="step-indicator active flex flex-col items-center relative z-10 focus:outline-none group" data-step="1">
+        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md transition-all group-hover:ring-4 group-hover:ring-blue-100">
+          <span class="step-icon">1</span>
+        </div>
+        <span class="text-xs font-bold text-slate-900 mt-2">Ranks &amp; Category</span>
+      </button>
+
+      <!-- Step 2 Indicator -->
+      <button type="button" class="step-indicator flex flex-col items-center relative z-10 focus:outline-none group" data-step="2">
+        <div class="w-10 h-10 rounded-full bg-white border-2 border-slate-300 text-slate-500 flex items-center justify-center font-bold text-sm shadow-xs transition-all group-hover:border-slate-400">
+          <span class="step-icon">2</span>
+        </div>
+        <span class="text-xs font-semibold text-slate-500 mt-2">Priority Order</span>
+      </button>
+
+      <!-- Step 3 Indicator -->
+      <button type="button" class="step-indicator flex flex-col items-center relative z-10 focus:outline-none group" data-step="3">
+        <div class="w-10 h-10 rounded-full bg-white border-2 border-slate-300 text-slate-500 flex items-center justify-center font-bold text-sm shadow-xs transition-all group-hover:border-slate-400">
+          <span class="step-icon">3</span>
+        </div>
+        <span class="text-xs font-semibold text-slate-500 mt-2">Branch Selection</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stepper Form Container -->
+  <form id="generatorForm" class="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-6 sm:p-10 space-y-8">
+    
+    <!-- STEP 1: Exam, Ranks, Category & Quota -->
+    <div id="step1" class="step-content space-y-7">
+      
+      <div class="border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
+          </div>
+          <span>Step 1: Exam Ranks &amp; Eligibility Quota</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-1 pl-10.5">Enter your JEE scores to evaluate eligibility across 54 institutes.</p>
+      </div>
+
+      <!-- Institute Target Segmented Cards -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+          Target Institutes <span class="text-blue-600">*</span>
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          
+          <label class="inst-type-card border-2 rounded-2xl p-4 flex items-start space-x-3 cursor-pointer hover:bg-slate-50 transition border-blue-600 bg-blue-50/50 shadow-xs">
+            <input type="radio" name="instituteType" value="ALL" checked class="mt-1 text-blue-600 focus:ring-blue-500">
+            <div>
+              <div class="text-sm font-bold text-slate-900">Both IITs &amp; NITs</div>
+              <div class="text-xs text-slate-500 mt-0.5">All 54 institutes (23 IITs + 31 NITs)</div>
+            </div>
+          </label>
+
+          <label class="inst-type-card border-2 rounded-2xl p-4 flex items-start space-x-3 cursor-pointer hover:bg-slate-50 transition border-slate-200 bg-white">
+            <input type="radio" name="instituteType" value="IIT" class="mt-1 text-blue-600 focus:ring-blue-500">
+            <div>
+              <div class="text-sm font-bold text-slate-900">IITs Only</div>
+              <div class="text-xs text-slate-500 mt-0.5">23 Indian Institutes of Technology</div>
+            </div>
+          </label>
+
+          <label class="inst-type-card border-2 rounded-2xl p-4 flex items-start space-x-3 cursor-pointer hover:bg-slate-50 transition border-slate-200 bg-white">
+            <input type="radio" name="instituteType" value="NIT" class="mt-1 text-blue-600 focus:ring-blue-500">
+            <div>
+              <div class="text-sm font-bold text-slate-900">NITs Only</div>
+              <div class="text-xs text-slate-500 mt-0.5">31 National Institutes of Technology</div>
+            </div>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- Ranks Input Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        
+        <!-- JEE Main Rank -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="jeeMainRank" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              JEE Main Rank <span class="text-rose-500">*</span>
+            </label>
+            <span class="text-[11px] text-slate-400 font-medium">CRL or Category</span>
+          </div>
+          <div class="relative rounded-xl shadow-xs">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-mono text-xs font-bold">
+              #
+            </div>
+            <input type="number" id="jeeMainRank" name="jeeMainRank" required min="1" max="1000000" placeholder="e.g. 14500"
+                   class="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-mono text-slate-900 placeholder-slate-400 transition">
+          </div>
+          <span class="text-[11px] text-slate-500 block">Evaluated for all 31 NITs and applicable state quotas.</span>
+        </div>
+
+        <!-- JEE Advanced Rank -->
+        <div class="space-y-1.5" id="jeeAdvContainer">
+          <div class="flex items-center justify-between">
+            <label for="jeeAdvRank" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              JEE Advanced Rank
+            </label>
+            <span class="text-[11px] text-blue-600 font-medium" id="jeeAdvRequiredBadge">For IITs</span>
+          </div>
+          <div class="relative rounded-xl shadow-xs">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-mono text-xs font-bold">
+              #
+            </div>
+            <input type="number" id="jeeAdvRank" name="jeeAdvRank" min="1" max="100000" placeholder="e.g. 3800 (Optional for NITs only)"
+                   class="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-mono text-slate-900 placeholder-slate-400 transition">
+          </div>
+          <span class="text-[11px] text-slate-500 block" id="jeeAdvHelperText">Leave blank if only targeting NIT colleges.</span>
+        </div>
+
+      </div>
+
+      <!-- Category & Gender Pool & Home State -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+        
+        <div class="space-y-1.5">
+          <label for="category" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Category <span class="text-rose-500">*</span>
+          </label>
+          <select id="category" name="category" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 text-sm font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="OPEN" selected>General / OPEN</option>
+            <option value="EWS">GEN-EWS</option>
+            <option value="OBC-NCL">OBC-NCL</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+          </select>
+          <span class="text-[11px] text-slate-500 block">Matches official category cutoffs.</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="genderPool" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Gender Pool <span class="text-rose-500">*</span>
+          </label>
+          <select id="genderPool" name="genderPool" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 text-sm font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="Gender-Neutral" selected>Gender-Neutral</option>
+            <option value="Female-only">Female-only (Supernumerary)</option>
+          </select>
+          <span class="text-[11px] text-slate-500 block">Applies 20% female supernumerary quota.</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="homeState" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Home State <span class="text-rose-500">*</span>
+          </label>
+          <select id="homeState" name="homeState" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 text-sm font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">Select State / UT...</option>
+            <% states.forEach(state => { %>
+              <option value="<%= state %>"><%= state %></option>
+            <% }) %>
+          </select>
+          <span class="text-[11px] text-slate-500 block">Calculates NIT 50% Home State (HS) Quota.</span>
+        </div>
+
+      </div>
+
+      <!-- Action buttons -->
+      <div class="pt-6 border-t border-slate-100 flex justify-end">
+        <button type="button" id="toStep2Btn" class="px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center space-x-2">
+          <span>Continue to Priorities</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Priority Ordering -->
+    <div id="step2" class="step-content space-y-7 hidden">
+      
+      <div class="border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+          </div>
+          <span>Step 2: Configure Your 3-Factor Priority Weightings</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-1 pl-10.5">
+          The algorithm sorts your qualified choices strictly in this order. Drag items or use arrows to adjust.
+        </p>
+      </div>
+
+      <!-- Priority Reorder Cards -->
+      <div id="priorityList" class="space-y-3.5">
+        
+        <!-- Priority Item 1: Branch Preference -->
+        <div class="priority-item flex items-center justify-between p-4.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-300 hover:shadow-sm transition cursor-move" data-id="branch">
+          <div class="flex items-center space-x-3.5">
+            <span class="priority-rank w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">1</span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                <span>Branch Preference First</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800">High Impact</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Ranks all your top preferred engineering disciplines (e.g., Computer Science) before moving to lower preference branches.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1 shrink-0 ml-3">
+            <button type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 move-up-btn transition" title="Move Up">
+              <i data-lucide="chevron-up" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 move-down-btn transition" title="Move Down">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Priority Item 2: NIRF Ranking -->
+        <div class="priority-item flex items-center justify-between p-4.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-300 hover:shadow-sm transition cursor-move" data-id="nirf">
+          <div class="flex items-center space-x-3.5">
+            <span class="priority-rank w-8 h-8 rounded-full bg-slate-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">2</span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                <span>NIRF Engineering Ranking</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700">Official MoE</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Prioritizes colleges by their official Ministry of Education NIRF 2024 ranking score.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1 shrink-0 ml-3">
+            <button type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 move-up-btn transition" title="Move Up">
+              <i data-lucide="chevron-up" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 move-down-btn transition" title="Move Down">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Priority Item 3: Placement Package -->
+        <div class="priority-item flex items-center justify-between p-4.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-300 hover:shadow-sm transition cursor-move" data-id="placement">
+          <div class="flex items-center space-x-3.5">
+            <span class="priority-rank w-8 h-8 rounded-full bg-slate-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">3</span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                <span>Average Placement Package (LPA)</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">ROI Focused</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Places colleges with verified higher average campus CTC packages at the top.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1 shrink-0 ml-3">
+            <button type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 move-up-btn transition" title="Move Up">
+              <i data-lucide="chevron-up" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 move-down-btn transition" title="Move Down">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Ambitious Choices on Top Toggle -->
+      <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-200 flex items-start space-x-3.5">
+        <input type="checkbox" id="ambitiousOnTop" name="ambitiousOnTop" checked class="mt-1 h-4.5 w-4.5 text-blue-600 focus:ring-blue-500 rounded border-slate-300">
+        <div>
+          <label for="ambitiousOnTop" class="text-xs font-bold text-slate-900 cursor-pointer flex items-center space-x-1.5">
+            <span>Place Ambitious Choices on Top (Recommended JoSAA Best Practice)</span>
+            <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-900 text-[10px] font-mono uppercase font-bold">Safe Strategy</span>
+          </label>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Since JoSAA allocation only moves upward in future rounds (Slide / Float), placing dream ambitious colleges at the very top prevents you from getting permanently locked out of top branches.
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+        <button type="button" id="backToStep1Btn" class="px-5 py-3 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-sm transition">
+          Back
+        </button>
+        <button type="button" id="toStep3Btn" class="px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center space-x-2">
+          <span>Continue to Branches</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- STEP 3: Branch Selection (Priority-Ranked) -->
+    <div id="step3" class="step-content space-y-6 hidden">
+
+      <div class="border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i data-lucide="git-branch" class="w-4 h-4"></i>
+          </div>
+          <span>Step 3: Branch Preferences &amp; Priority Order</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-1 pl-10.5">
+          Click branches below to add them in your preferred priority order. First clicked = highest priority.
+        </p>
+      </div>
+
+      <!-- Selected Priority Tags Area -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Your Priority Order</label>
+          <button type="button" id="clearBranchesBtn" class="text-xs font-semibold text-rose-500 hover:text-rose-700 px-2 py-1 rounded hover:bg-rose-50 transition flex items-center space-x-1">
+            <i data-lucide="x-circle" class="w-3 h-3"></i>
+            <span>Clear All</span>
+          </button>
+        </div>
+        <div id="priorityTagsArea" class="min-h-[60px] flex flex-wrap gap-2 p-3.5 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 transition-colors">
+          <p id="priorityTagsPlaceholder" class="text-xs text-slate-400 italic self-center">
+            No branches selected yet — click a branch below to add it to your priority list.
+          </p>
+        </div>
+        <!-- Hidden inputs for selected branches will be injected here by JS -->
+        <div id="selectedBranchesInputs"></div>
+      </div>
+
+      <!-- Domain Filter Tabs -->
+      <div class="flex flex-wrap gap-1.5" id="branchFilterChips">
+        <button type="button" class="branch-filter-chip active px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white transition" data-group="ALL">All Disciplines</button>
+        <button type="button" class="branch-filter-chip px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-group="Computer">Computer &amp; IT</button>
+        <button type="button" class="branch-filter-chip px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-group="Electrical">Electrical &amp; ECE</button>
+        <button type="button" class="branch-filter-chip px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-group="Mechanical">Mechanical &amp; Aero</button>
+        <button type="button" class="branch-filter-chip px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-group="Civil">Civil &amp; Infra</button>
+        <button type="button" class="branch-filter-chip px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-group="Chemical">Chemical</button>
+        <button type="button" class="branch-filter-chip px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition" data-group="Biotech">Biotech &amp; Sciences</button>
+      </div>
+
+      <!-- Available Branches Grid -->
+      <div>
+        <label class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 block">Available Branches <span class="text-slate-400 font-normal normal-case">(click to add)</span></label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1" id="branchesContainer">
+          <% branches.forEach(branch => { %>
+            <button type="button"
+              class="branch-card-btn text-left flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 hover:shadow-sm transition group"
+              data-name="<%= branch.canonical_name %>"
+              data-group="<%= branch.group_name %>">
+              <div class="min-w-0 pr-2">
+                <span class="font-semibold text-slate-800 text-xs block truncate group-hover:text-blue-700 transition"><%= branch.canonical_name %></span>
+                <span class="text-[10px] text-slate-400 uppercase font-mono"><%= branch.group_name %></span>
+              </div>
+              <span class="branch-add-icon shrink-0 w-6 h-6 rounded-full bg-slate-100 group-hover:bg-blue-600 text-slate-400 group-hover:text-white flex items-center justify-center transition text-xs font-bold">+</span>
+            </button>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+        <button type="button" id="backToStep2Btn" class="px-5 py-3 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-sm transition">
+          Back
+        </button>
+        <button type="submit" id="generateSubmitBtn" class="px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center space-x-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Generate My Choice List</span>
+        </button>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+
+<script src="/js/generator.js"></script>
+<%- include('partials/footer') %>

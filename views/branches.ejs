@@ -1,0 +1,80 @@
+<%- include('partials/head', { title: 'Engineering Branches — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8 space-y-7">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-2.5">
+        <i data-lucide="git-branch" class="w-3.5 h-3.5 text-blue-600"></i>
+        <span>Canonical JoSAA Disciplines</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Engineering Branches (IITs &amp; NITs)</h1>
+      <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+        Explore academic specializations mapped across all 54 institutes in the JoSAA seat allocation framework.
+      </p>
+    </div>
+
+    <!-- Live Search -->
+    <div class="relative max-w-xs w-full self-start sm:self-auto">
+      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <i data-lucide="search" class="w-4 h-4"></i>
+      </div>
+      <input type="text" id="branchSearch" placeholder="Filter branches..."
+             class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white">
+    </div>
+  </div>
+
+  <!-- Disciplines Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="branchesGrid">
+    <% branches.forEach(b => { %>
+      <div class="branch-card bg-white border border-slate-200/90 rounded-3xl p-6 hover:border-blue-300 hover:shadow-lg transition-all flex flex-col justify-between group" data-name="<%= b.canonical_name.toLowerCase() %> <%= b.group_name.toLowerCase() %>">
+        <div>
+          <div class="flex items-center justify-between mb-3.5">
+            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 font-mono">
+              <%= b.group_name %>
+            </span>
+            <span class="text-xs font-extrabold text-blue-700 bg-blue-50 border border-blue-200/60 px-2.5 py-0.5 rounded-lg font-mono">
+              <%= b.institute_count %> Colleges
+            </span>
+          </div>
+
+          <h3 class="text-base font-extrabold text-slate-900 mb-2 leading-snug group-hover:text-blue-600 transition">
+            <%= b.canonical_name %>
+          </h3>
+          <p class="text-xs text-slate-500 leading-relaxed mb-4">
+            Curriculum covers core foundational engineering principles, laboratory modules, and specialized electives in JoSAA accredited institutes.
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-[11px] text-slate-400 font-medium">B.Tech / B.S. Programs</span>
+          <a href="/explore" class="font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-1 group-hover:translate-x-0.5 transition-transform">
+            <span>Find offering institutes</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  const search = document.getElementById('branchSearch');
+  if (search) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.branch-card');
+      cards.forEach(card => {
+        if (!q || card.dataset.name.includes(q)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  }
+</script>
+
+<%- include('partials/footer') %>

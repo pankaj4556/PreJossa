@@ -1,0 +1,162 @@
+<%- include('../partials/head', { title: 'Admin Dashboard' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <!-- Admin Navigation Header -->
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-bold">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+        </div>
+        <span class="font-bold text-slate-100 tracking-tight">JoSAA Admin Panel</span>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold">
+        <a href="<%= adminRoutePath %>" class="px-3 py-1.5 rounded-lg bg-slate-800 text-sky-400">Dashboard</a>
+        <a href="<%= adminRoutePath %>/payments" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center space-x-1">
+          <span>Payment History</span>
+        </a>
+        <a href="<%= adminRoutePath %>/audit" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Data Audit</a>
+        <a href="<%= adminRoutePath %>/imports" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">CSV Imports</a>
+        <a href="<%= adminRoutePath %>/settings" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Settings</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="text-slate-400">Logged in as <strong class="text-slate-200"><%= admin.username %></strong></span>
+        <a href="<%= adminRoutePath %>/logout" class="px-3 py-1.5 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/50 transition">Log Out</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Title & Status -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">System Overview</h1>
+        <p class="text-xs text-slate-400 mt-1">Real-time statistics on choices generated, pending UPI payments, and downloads.</p>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <a href="<%= adminRoutePath %>/payments" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold transition flex items-center space-x-1.5">
+          <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+          <span>Verify Payments (<%= paymentStats.pending %> Pending)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Metrics Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-1">
+        <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Total Choice Lists</span>
+        <div class="text-3xl font-extrabold text-white font-mono"><%= totalLists %></div>
+        <span class="text-slate-400 text-[11px] block mt-1"><%= totalGenerated %> previews generated</span>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-1">
+        <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Total Transactions</span>
+        <div class="text-3xl font-extrabold text-amber-400 font-mono"><%= paymentStats.total %></div>
+        <span class="text-slate-400 text-[11px] block mt-1"><%= paymentStats.pending %> in progress / <%= paymentStats.failed || 0 %> failed</span>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-1">
+        <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Verified Purchases</span>
+        <div class="text-3xl font-extrabold text-emerald-400 font-mono"><%= paymentStats.approved %></div>
+        <span class="text-slate-400 text-[11px] block mt-1"><%= totalDownloads %> files downloaded</span>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-1">
+        <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Total Revenue (₹49/dl)</span>
+        <div class="text-3xl font-extrabold text-sky-400 font-mono">₹<%= paymentStats.revenueInr %></div>
+        <span class="text-slate-400 text-[11px] block mt-1">Automated Razorpay Gateway</span>
+      </div>
+    </div>
+
+    <!-- Data Freshness & Database Indexing Card (PRD Section 16) -->
+    <div class="p-6 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Data Freshness & Database State</h2>
+        <span class="text-xs font-mono text-emerald-400 flex items-center space-x-1">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Active Data Year: <%= dataFreshness.dataYear %></span>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs font-mono">
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
+          <span class="text-slate-400 block text-[10px] uppercase">Institutes</span>
+          <span class="text-lg font-bold text-white"><%= dataFreshness.institutes %></span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
+          <span class="text-slate-400 block text-[10px] uppercase">Academic Programs</span>
+          <span class="text-lg font-bold text-white"><%= dataFreshness.programs %></span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
+          <span class="text-slate-400 block text-[10px] uppercase">JoSAA Cutoff Rows</span>
+          <span class="text-lg font-bold text-white"><%= dataFreshness.closingRanks %></span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
+          <span class="text-slate-400 block text-[10px] uppercase">NIRF Rankings</span>
+          <span class="text-lg font-bold text-white"><%= dataFreshness.nirfRankings %></span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
+          <span class="text-slate-400 block text-[10px] uppercase">Placement Records</span>
+          <span class="text-lg font-bold text-white"><%= dataFreshness.placements %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Payments Queue Preview -->
+    <div class="p-6 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Recent Payment Transactions</h2>
+        <a href="<%= adminRoutePath %>/payments" class="text-xs text-sky-400 hover:text-sky-300 font-semibold">View All Transactions &rarr;</a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="text-slate-400 uppercase text-[10px] border-b border-slate-700">
+            <tr>
+              <th class="py-2.5 px-3">Student</th>
+              <th class="py-2.5 px-3">Razorpay Order / Ref</th>
+              <th class="py-2.5 px-3 text-center">Amount</th>
+              <th class="py-2.5 px-3 text-center">Status</th>
+              <th class="py-2.5 px-3 text-right">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700/60 font-mono">
+            <% recentPayments.forEach(p => { %>
+              <tr class="hover:bg-slate-700/30">
+                <td class="py-2.5 px-3 font-sans">
+                  <span class="font-bold text-slate-200 block"><%= p.user_name %></span>
+                  <span class="text-slate-400 text-[10px]"><%= p.user_email %></span>
+                </td>
+                <td class="py-2.5 px-3 text-sky-300 font-bold">
+                  <%= p.razorpay_payment_id || p.razorpay_order_id || p.upi_reference_id %>
+                </td>
+                <td class="py-2.5 px-3 text-center">₹<%= (p.amount / 100).toFixed(0) %></td>
+                <td class="py-2.5 px-3 text-center font-sans">
+                  <% if (p.status === 'pending') { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-900/40 text-amber-300 border border-amber-800">Initiated</span>
+                  <% } else if (p.status === 'approved') { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/40 text-emerald-300 border border-emerald-800">Auto-Verified</span>
+                  <% } else { %>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-900/40 text-red-300 border border-red-800">Failed</span>
+                  <% } %>
+                </td>
+                <td class="py-2.5 px-3 text-right text-slate-400 text-[10px]"><%= p.submitted_at %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  if (window.lucide) window.lucide.createIcons();
+</script>
+</body>
+</html>

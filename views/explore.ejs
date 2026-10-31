@@ -1,0 +1,149 @@
+<%- include('partials/head', { title: 'College Explorer — PreJOSAA' }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+  
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-2.5">
+      <i data-lucide="compass" class="w-3.5 h-3.5 text-blue-600"></i>
+      <span>Official Institute Directory</span>
+    </div>
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          College Explorer: 23 IITs &amp; 31 NITs
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 mt-1 max-w-3xl">
+          Search, compare, and inspect verified NIRF 2024 engineering rankings, placement statistics, program seat matrices, and historical JoSAA closing ranks.
+        </p>
+      </div>
+      <div class="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 self-start sm:self-auto shrink-0">
+        100% Real MoE &amp; JoSAA Data
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls Card -->
+  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-7 mb-8 space-y-5">
+    
+    <!-- Top Row: Search Input & Type Filter -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+      
+      <!-- Search Input -->
+      <div class="md:col-span-7 lg:col-span-8 relative">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search by college name, city, or JoSAA code (e.g. Bombay, Trichy, 102)..."
+               class="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 placeholder-slate-400 transition">
+      </div>
+
+      <!-- Segmented Type Selector -->
+      <div class="md:col-span-5 lg:col-span-4 flex rounded-2xl border border-slate-200 p-1.5 bg-slate-50 text-xs font-bold">
+        <button type="button" class="type-filter-btn flex-1 py-2 rounded-xl bg-white shadow-xs text-blue-700 transition" data-type="ALL">All (54)</button>
+        <button type="button" class="type-filter-btn flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition" data-type="IIT">IITs (23)</button>
+        <button type="button" class="type-filter-btn flex-1 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition" data-type="NIT">NITs (31)</button>
+      </div>
+    </div>
+
+    <!-- Secondary Filters Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-slate-100">
+      
+      <div>
+        <label for="stateFilter" class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">State / UT</label>
+        <select id="stateFilter" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="ALL">All States (All India)</option>
+          <% states.forEach(state => { %>
+            <option value="<%= state %>"><%= state %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div>
+        <label for="branchFilter" class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Offered Discipline</label>
+        <select id="branchFilter" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="ALL">All Branches</option>
+          <% branches.forEach(b => { %>
+            <option value="<%= b %>"><%= b %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div>
+        <label for="nirfFilter" class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">NIRF 2024 Rank</label>
+        <select id="nirfFilter" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="999">Any Ranking</option>
+          <option value="10">Top 10 Only</option>
+          <option value="25">Top 25 Only</option>
+          <option value="50">Top 50 Only</option>
+          <option value="100">Top 100 Only</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="placementFilter" class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Avg Campus CTC</label>
+        <select id="placementFilter" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="0">Any Package</option>
+          <option value="12">₹12+ LPA</option>
+          <option value="16">₹16+ LPA</option>
+          <option value="20">₹20+ LPA</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Active Filter Chips Row -->
+    <div id="activeFilterChipsContainer" class="hidden pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
+      <span class="text-slate-400 font-semibold text-[11px] uppercase tracking-wider">Active Filters:</span>
+      <div id="activeChipsList" class="flex flex-wrap gap-1.5"></div>
+      <button type="button" id="clearAllFiltersBtn" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] uppercase tracking-wider underline ml-2">
+        Clear All
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Results Count & Sorting Toolbar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+    <div class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center space-x-2" id="resultsCount">
+      <span>Loading Institutes...</span>
+    </div>
+    
+    <div class="flex items-center space-x-2 text-xs self-start sm:self-auto">
+      <span class="text-slate-500 font-medium">Sort By:</span>
+      <select id="sortBy" class="px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-semibold text-slate-700 focus:ring-2 focus:ring-blue-500">
+        <option value="nirf">NIRF Ranking (Top First)</option>
+        <option value="placement">Average Placement (High to Low)</option>
+        <option value="name">Institute Name (A-Z)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Colleges Cards Grid -->
+  <div id="collegesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Populated dynamically via explore.js -->
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200/90 p-8 space-y-4 shadow-sm">
+    <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+      <i data-lucide="search-x" class="w-7 h-7"></i>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold text-slate-800">No Institutes Match Your Search</h3>
+      <p class="text-xs text-slate-500 max-w-md mx-auto mt-1">
+        Try broadening your filters, choosing "All States", or adjusting the minimum placement threshold.
+      </p>
+    </div>
+    <div>
+      <button id="resetFiltersBtn" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 shadow transition">
+        Reset All Filters
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/explore.js"></script>
+<%- include('partials/footer') %>
