@@ -150,20 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', async () => {
       const format = btn.dataset.format;
 
-      // 1. If not logged in -> redirect to login
-      if (!userIsLoggedIn) {
-        window.location.href = `/login?returnTo=${encodeURIComponent(window.location.pathname)}`;
-        return;
-      }
-
-      // 2. If purchase unlocked -> download directly
+      // 1. If purchase is already unlocked -> download directly
       if (isPurchaseUnlocked) {
         if (hasUnsavedChanges) await saveListToServer();
         window.location.href = `/api/download/${format}/${choiceListId}`;
         return;
       }
 
-      // 3. Otherwise -> Open Payment Modal
+      // 2. If not logged in -> redirect to login, then come back to payment page
+      if (!userIsLoggedIn) {
+        window.location.href = `/login?returnTo=${encodeURIComponent('/payment/' + choiceListId)}`;
+        return;
+      }
+
+      // 3. Logged in but not paid -> Open Payment Modal
       if (hasUnsavedChanges) await saveListToServer();
       if (window.openPaymentModal) {
         window.openPaymentModal(choiceListId);

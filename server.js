@@ -32,14 +32,18 @@ app.use(express.urlencoded({ extended: true }));
 // Serve Static Assets (Tailwind, JS, Images, Icons)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session Configuration
+// Session Configuration (SQLite-backed — survives server restarts)
+const SqliteStore = require('better-sqlite3-session-store')(session);
+const sessionDb = require('./database/db');
+
 app.use(session({
   name: 'josaa_session',
-  secret: config.admin?.sessionSecret || 'josaa_secret_key_2025',
+  store: new SqliteStore({ client: sessionDb, expired: { clear: true, intervalMs: 900000 } }),
+  secret: process.env.SESSION_SECRET || config.admin?.sessionSecret || 'josaa_secret_key_2025',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days — stays logged in
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production'
   }

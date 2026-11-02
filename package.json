@@ -18,11 +18,13 @@
     "@gsap/react": "^2.1.2",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^13.0.3",
+    "better-sqlite3-session-store": "^0.1.0",
     "csv-parser": "^3.2.1",
     "csv-writer": "^1.6.0",
     "docx": "^9.11.0",
     "dotenv": "^18.0.8",
     "ejs": "^7.0.1",
+    "esbuild": "^0.28.2",
     "exceljs": "^4.4.0",
     "express": "^5.3.0",
     "express-session": "^1.19.0",
@@ -34,8 +36,6 @@
     "razorpay": "^2.9.8",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "sqlite3": "^6.0.1",
-    "esbuild": "^0.28.2"
-  },
-  "devDependencies": {}
+    "sqlite3": "^6.0.1"
+  }
 }
