@@ -17,6 +17,9 @@ const db = require('./database/db');
 const app = express();
 const PORT = process.env.PORT || config.site?.port || 3000;
 
+// Trust proxy for reverse proxies (Render, Heroku, Cloudflare, Nginx) so secure cookies work properly
+app.set('trust proxy', 1);
+
 // Setup Template Engine (EJS)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -45,7 +48,8 @@ app.use(session({
   cookie: {
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days — stays logged in
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production' && process.env.COOKIE_SECURE !== 'false'
   }
 }));
 
@@ -63,7 +67,8 @@ app.use((req, res, next) => {
     upiId: process.env.UPI_ID || config.payments?.upiId || '8000859195@naviaxis',
     keyId: process.env.RAZORPAY_KEY_ID || config.payments?.keyId || 'rzp_test_Ts0RTmsL5QfBuC'
   };
-  res.locals.adminRoutePath = '/@65783+@4556/admin';
+  const ADMIN_ROUTE_PATH = (process.env.ADMIN_ROUTE_PATH || '/@65783+@4556/admin').replace(/\/+$/, '');
+  res.locals.adminRoutePath = ADMIN_ROUTE_PATH;
   next();
 });
 
@@ -72,17 +77,23 @@ const publicRoutes = require('./routes/public');
 const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/admin');
 
-// Handle both raw '+' and '%2B' in the custom admin secret path
-app.use((req, res, next) => {
-  if (req.url.startsWith('/@65783%2B@4556/admin')) {
-    req.url = req.url.replace('/@65783%2B@4556/admin', '/@65783+@4556/admin');
-  }
-  next();
-});
+const ADMIN_ROUTE_PATH = (process.env.ADMIN_ROUTE_PATH || '/@65783+@4556/admin').replace(/\/+$/, '');
 
-const ADMIN_PATH = '/@65783\\+@4556/admin';
+// Handle encoded URL variants (e.g. %2B vs literal +) if path contains +
+if (ADMIN_ROUTE_PATH.includes('+')) {
+  const encodedPath = ADMIN_ROUTE_PATH.replace(/\+/g, '%2B');
+  app.use((req, res, next) => {
+    if (req.url.startsWith(encodedPath)) {
+      req.url = req.url.replace(encodedPath, ADMIN_ROUTE_PATH);
+    }
+    next();
+  });
+}
+
+// In path-to-regexp (used by Express), escape '+' if present
+const adminMountPath = ADMIN_ROUTE_PATH.replace(/\+/g, '\\+');
 app.use('/api', apiRoutes);
-app.use(ADMIN_PATH, adminRoutes);
+app.use(adminMountPath, adminRoutes);
 app.use('/', publicRoutes);
 
 // 404 Handler
@@ -109,7 +120,7 @@ app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`  🚀 ${config.site?.name || 'PreJOSAA'} is live on http://localhost:${PORT}`);
   console.log(`  📊 Database: SQLite WAL (${config.paths?.database})`);
-  console.log(`  🔐 Admin Portal: http://localhost:${PORT}/@65783+@4556/admin`);
+  console.log(`  🔐 Admin Portal: http://localhost:${PORT}${ADMIN_ROUTE_PATH}`);
   console.log(`  ⚡ UPI Price: ₹${config.payments?.pricePerDownloadInr || 49} / download`);
   console.log(`=======================================================`);
 });

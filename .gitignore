@@ -10,6 +10,7 @@ npm-debug.log*
 # === Database (contains user + payment data) ===
 *.db
 *.sqlite
+*.sqlite*
 *.sqlite3
 
 # === User file uploads ===

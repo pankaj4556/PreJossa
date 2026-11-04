@@ -44,4 +44,31 @@ try {
   console.warn('Note on payments schema migration:', migErr.message);
 }
 
+// Ensure admin_users table and default admin exist
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS admin_users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  const adminUser = (process.env.ADMIN_USERNAME || 'admin').trim();
+  const adminPass = (process.env.ADMIN_PASSWORD || (process.env.NODE_ENV === 'production' ? '' : 'admin123')).trim();
+  if (adminPass) {
+    const existingAdmin = db.prepare("SELECT id, password_hash FROM admin_users WHERE username = ?").get(adminUser);
+    const bcrypt = require('bcryptjs');
+    if (!existingAdmin) {
+      const hash = bcrypt.hashSync(adminPass, 10);
+      db.prepare("INSERT INTO admin_users (username, password_hash) VALUES (?, ?)").run(adminUser, hash);
+    } else if (process.env.ADMIN_PASSWORD && !bcrypt.compareSync(adminPass, existingAdmin.password_hash)) {
+      const hash = bcrypt.hashSync(adminPass, 10);
+      db.prepare("UPDATE admin_users SET password_hash = ? WHERE id = ?").run(hash, existingAdmin.id);
+    }
+  }
+} catch (adminInitErr) {
+  console.warn('Note on admin_users table check:', adminInitErr.message);
+}
+
 module.exports = db;
