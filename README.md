@@ -126,32 +126,6 @@ node scripts/simulate_ransomware_drill.js
   • Cryptographic Checksum Verified:         df2125c04c98ff67e0f1a010f0c53f3760751b4872bfee79152676e3b8b9d3bc
   • Production Promotion Status:             READY FOR DEPLOYMENT
 ======================================================================
-```
-
----
-
-## 🔗 Route & URL Wiring Guide
-
-The Recovery Center is cleanly wired into the administrative route tree:
-
-| Module / Action | URL Endpoint | Access Level & Zero Trust Controls |
-| :--- | :--- | :--- |
-| **Admin Login** | `/@65783+@4556/admin/login` | Rate limited (10 attempts/5m), audit logged |
-| **Admin Dashboard** | `/@65783+@4556/admin` | Session authenticated, 30m idle expiry |
-| **Recovery Center Hub** | `/@65783+@4556/admin/recovery` | Admin RBAC, RPO/RTO & Threat summary |
-| **Recovery Point Catalog** | `/@65783+@4556/admin/recovery/backups` | List, SHA-256 fingerprints, 4-tier validation |
-| **Create Clean Backup** | `POST /@65783+@4556/admin/recovery/backups/create` | Rate limited, automated validation check |
-| **Restore Drill Runner** | `/@65783+@4556/admin/recovery/drills` | Non-destructive sandbox drill, empirical RTO |
-| **Restore to Staging** | `/@65783+@4556/admin/recovery/staging` | Restores to `database/staging.sqlite`, health checks |
-| **RPO / RTO SLA View** | `/@65783+@4556/admin/recovery/rpo-rto` | Real-time SLA analysis & recovery architecture |
-| **Threat Signals & Containment** | `/@65783+@4556/admin/recovery/threats` | Spikes monitor (deletes, exports, failed logins) |
-| **Containment Killswitch** | `POST /@65783+@4556/admin/recovery/threats/containment` | **Step-Up Authentication Required** |
-| **Step-Up Verification** | `/@65783+@4556/admin/recovery/step-up` | Re-verifies password, grants 5-minute clearance |
-| **Append-Only Audit Logs** | `/@65783+@4556/admin/recovery/audit` | Filterable immutable audit ledger |
-| **CSV Data Import** | `/@65783+@4556/admin/imports` | Bulk data upload and import audit |
-| **Protected File Exports** | `/api/download/:format/:choiceListId` | Rate-limited (20/5m), containment guarded |
-
----
 
 ## 🚀 Running the Application
 
@@ -165,8 +139,3 @@ npm run seed
 # Start server
 npm start
 ```
-Default Admin credentials (development):
-- **Username**: `admin`
-- **Password**: `admin123`
-- **Admin Portal**: `http://localhost:3000/@65783+@4556/admin`
-- **Recovery Center**: `http://localhost:3000/@65783+@4556/admin/recovery`
