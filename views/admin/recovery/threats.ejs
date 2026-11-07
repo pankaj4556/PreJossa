@@ -1,0 +1,164 @@
+<%- include('../../partials/head', { title: 'Threat Signals & Containment Console — Recovery Center' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <%- include('./nav', { activeTab: 'threats' }) %>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Threat Signals &amp; Containment Console</h1>
+        <p class="text-xs text-slate-400 mt-1">Real-time heuristics monitor mass delete spikes, exfiltration bursts, and brute-force storms with instant circuit-breaker containment.</p>
+      </div>
+
+      <!-- Containment Status Pill -->
+      <span class="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 <%= threats.containment.enabled ? 'bg-red-950 border border-red-700 text-red-200 animate-pulse' : 'bg-emerald-950 border border-emerald-700 text-emerald-300' %>">
+        <i data-lucide="<%= threats.containment.enabled ? 'shield-alert' : 'shield-check' %>" class="w-4 h-4"></i>
+        <span><%= threats.containment.enabled ? 'CONTAINMENT ACTIVE' : 'SYSTEM OPERATIONAL' %></span>
+      </span>
+    </div>
+
+    <% if (flash) { %>
+      <div class="p-4 rounded-xl text-xs font-medium flex items-center space-x-2 <%= flashType === 'success' ? 'bg-emerald-950/80 border border-emerald-700/60 text-emerald-200' : 'bg-red-950/80 border border-red-700/60 text-red-200' %>">
+        <i data-lucide="<%= flashType === 'success' ? 'check-circle' : 'alert-octagon' %>" class="w-4 h-4 flex-shrink-0"></i>
+        <span><%= flash %></span>
+      </div>
+    <% } %>
+
+    <!-- Emergency Containment Toggle Box (Step-Up Protected) -->
+    <div class="p-6 rounded-2xl <%= threats.containment.enabled ? 'bg-red-950/40 border border-red-500/50' : 'bg-slate-800 border border-slate-700/80' %> shadow-xl space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <h2 class="text-base font-bold text-white">Emergency Containment Kill-Switch</h2>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-900 border border-slate-700 text-slate-300">
+              Zero Trust &bull; Step-Up Protected
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 max-w-2xl">
+            When enabled, all delete operations across the entire application are blocked instantly, and all file exports (PDF, Excel, CSV, Word) are frozen to stop ransomware or malicious data exfiltration in its tracks.
+          </p>
+        </div>
+
+        <div>
+          <form method="POST" action="<%= recoveryRoutePath %>/threats/containment" class="flex items-center space-x-2">
+            <% if (threats.containment.enabled) { %>
+              <input type="hidden" name="enabled" value="0">
+              <button type="submit" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition flex items-center space-x-1.5 shadow-lg shadow-emerald-950/50">
+                <i data-lucide="unlock" class="w-4 h-4"></i>
+                <span>Disable Containment</span>
+              </button>
+            <% } else { %>
+              <input type="hidden" name="enabled" value="1">
+              <input type="hidden" name="reason" value="Operator initiated manual emergency containment">
+              <button type="submit" class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-bold text-white transition flex items-center space-x-1.5 shadow-lg shadow-red-950/50">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                <span>ACTIVATE CONTAINMENT</span>
+              </button>
+            <% } %>
+          </form>
+        </div>
+      </div>
+
+      <% if (threats.containment.enabled) { %>
+        <div class="p-3 rounded-xl bg-red-900/30 border border-red-700/50 text-xs text-red-200">
+          <strong>Active Incident Reason:</strong> <%= threats.containment.reason %>
+          <div class="text-[11px] text-red-300/80 mt-0.5">Activated at <%= threats.containment.enabled_at %> by <%= threats.containment.enabled_by || 'Admin' %></div>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Threat Signal Meters Grid (15-min rolling window) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+      
+      <!-- Failed Login Storms -->
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Failed Login Storms</span>
+          <i data-lucide="user-x" class="w-4 h-4 text-amber-400"></i>
+        </div>
+        <div class="text-3xl font-black font-mono <%= threats.metrics.failedLogins > 5 ? 'text-amber-400' : 'text-white' %>">
+          <%= threats.metrics.failedLogins %>
+        </div>
+        <div class="text-[11px] text-slate-400 flex items-center justify-between">
+          <span>Threshold: <%= threats.thresholds.failedLogins.warning %> warn / <%= threats.thresholds.failedLogins.critical %> crit</span>
+          <span class="<%= threats.metrics.failedLogins >= threats.thresholds.failedLogins.warning ? 'text-amber-400 font-bold' : 'text-emerald-400' %>">
+            <%= threats.metrics.failedLogins >= threats.thresholds.failedLogins.warning ? 'ELEVATED' : 'NOMINAL' %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Mass Deletes -->
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Mass Delete Frequency</span>
+          <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
+        </div>
+        <div class="text-3xl font-black font-mono <%= threats.metrics.massDeletes > 3 ? 'text-red-400' : 'text-white' %>">
+          <%= threats.metrics.massDeletes %>
+        </div>
+        <div class="text-[11px] text-slate-400 flex items-center justify-between">
+          <span>Threshold: <%= threats.thresholds.massDeletes.warning %> warn / <%= threats.thresholds.massDeletes.critical %> crit</span>
+          <span class="<%= threats.metrics.massDeletes >= threats.thresholds.massDeletes.warning ? 'text-red-400 font-bold' : 'text-emerald-400' %>">
+            <%= threats.metrics.massDeletes >= threats.thresholds.massDeletes.warning ? 'ALERT' : 'NOMINAL' %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Export Bursts -->
+      <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold">Export Burst Rate</span>
+          <i data-lucide="download" class="w-4 h-4 text-sky-400"></i>
+        </div>
+        <div class="text-3xl font-black font-mono <%= threats.metrics.exportBursts > 10 ? 'text-sky-400' : 'text-white' %>">
+          <%= threats.metrics.exportBursts %>
+        </div>
+        <div class="text-[11px] text-slate-400 flex items-center justify-between">
+          <span>Threshold: <%= threats.thresholds.exportBursts.warning %> warn / <%= threats.thresholds.exportBursts.critical %> crit</span>
+          <span class="<%= threats.metrics.exportBursts >= threats.thresholds.exportBursts.warning ? 'text-sky-400 font-bold' : 'text-emerald-400' %>">
+            <%= threats.metrics.exportBursts >= threats.thresholds.exportBursts.warning ? 'BURST' : 'NOMINAL' %>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Active Anomalies List -->
+    <div class="p-5 rounded-2xl bg-slate-800 border border-slate-700/80 space-y-3">
+      <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+        <i data-lucide="radio" class="w-4 h-4 text-sky-400"></i>
+        <span>Active Real-Time Anomaly Signals (<%= threats.anomalies.length %>)</span>
+      </h3>
+
+      <% if (threats.anomalies.length === 0) { %>
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 text-center flex items-center justify-center space-x-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+          <span>All threat heuristics within normal operating parameters. No rogue deletion spikes or brute-force storms detected.</span>
+        </div>
+      <% } else { %>
+        <div class="space-y-2">
+          <% threats.anomalies.forEach(a => { %>
+            <div class="p-3.5 rounded-xl text-xs flex items-center justify-between <%= a.severity === 'CRITICAL' ? 'bg-red-950/70 border border-red-700/80 text-red-200' : 'bg-amber-950/70 border border-amber-700/80 text-amber-200' %>">
+              <div class="flex items-center space-x-2.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0"></i>
+                <span class="font-semibold"><%= a.message %></span>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/40">
+                <%= a.severity %>
+              </span>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+<%- include('../../partials/footer') %>

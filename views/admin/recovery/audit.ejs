@@ -1,0 +1,123 @@
+<%- include('../../partials/head', { title: 'Append-Only Audit Logs & History — Recovery Center' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <%- include('./nav', { activeTab: 'audit' }) %>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Append-Only Audit Logs &amp; Versioning</h1>
+        <p class="text-xs text-slate-400 mt-1">Immutable ledger tracking who modified what, authentication outcomes, recovery actions, and before/after states.</p>
+      </div>
+
+      <div class="text-xs text-slate-400 font-mono">
+        Total Records: <strong class="text-emerald-400"><%= total %></strong>
+      </div>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="p-4 rounded-xl bg-slate-800 border border-slate-700/80 flex flex-wrap items-center gap-3 text-xs">
+      <span class="text-slate-400 font-semibold text-[11px] uppercase tracking-wider">Quick Filters:</span>
+      <a href="<%= recoveryRoutePath %>/audit" class="px-2.5 py-1 rounded-lg transition <%= !actionFilter ? 'bg-slate-700 text-white font-bold' : 'text-slate-400 hover:text-white' %>">
+        All Actions
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit?action=LOGIN" class="px-2.5 py-1 rounded-lg transition <%= actionFilter === 'LOGIN' ? 'bg-emerald-900/60 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white' %>">
+        Logins
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit?action=FAILED_LOGIN" class="px-2.5 py-1 rounded-lg transition <%= actionFilter === 'FAILED_LOGIN' ? 'bg-amber-900/60 text-amber-300 font-bold' : 'text-slate-400 hover:text-white' %>">
+        Failed Logins
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit?action=EXPORT" class="px-2.5 py-1 rounded-lg transition <%= actionFilter === 'EXPORT' ? 'bg-sky-900/60 text-sky-300 font-bold' : 'text-slate-400 hover:text-white' %>">
+        Exports
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit?action=SOFT_DELETE" class="px-2.5 py-1 rounded-lg transition <%= actionFilter === 'SOFT_DELETE' ? 'bg-red-900/60 text-red-300 font-bold' : 'text-slate-400 hover:text-white' %>">
+        Soft Deletes
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit?action=BACKUP_VALIDATED_CLEAN" class="px-2.5 py-1 rounded-lg transition <%= actionFilter === 'BACKUP_VALIDATED_CLEAN' ? 'bg-emerald-900/60 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white' %>">
+        Clean Backups
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit?action=RESTORE_DRILL_COMPLETED" class="px-2.5 py-1 rounded-lg transition <%= actionFilter === 'RESTORE_DRILL_COMPLETED' ? 'bg-purple-900/60 text-purple-300 font-bold' : 'text-slate-400 hover:text-white' %>">
+        Restore Drills
+      </a>
+    </div>
+
+    <!-- Audit Logs Table -->
+    <div class="rounded-2xl bg-slate-800 border border-slate-700/80 overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900/80 border-b border-slate-700/80 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="px-4 py-3">Timestamp (UTC)</th>
+              <th class="px-4 py-3">Actor &bull; Role</th>
+              <th class="px-4 py-3">Action</th>
+              <th class="px-4 py-3">Target Entity</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3">Details / Diff</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700/50">
+            <% if (logs.length === 0) { %>
+              <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-slate-400">No audit logs matching query.</td>
+              </tr>
+            <% } %>
+            <% logs.forEach(l => { %>
+              <tr class="hover:bg-slate-700/30 transition">
+                <td class="px-4 py-3 font-mono text-[11px] text-slate-300 whitespace-nowrap">
+                  <%= l.timestamp %>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="font-medium text-slate-200"><%= l.actor_username %></div>
+                  <span class="text-[10px] text-slate-400 uppercase font-semibold"><%= l.actor_role %></span>
+                </td>
+                <td class="px-4 py-3 font-mono font-semibold">
+                  <span class="px-2 py-0.5 rounded text-[10px] <%= l.action.includes('FAIL') || l.action.includes('BLOCK') ? 'bg-red-950 text-red-400 border border-red-800' : (l.action.includes('DELETE') ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-slate-900 text-sky-300 border border-slate-700') %>">
+                    <%= l.action %>
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-300">
+                  <span class="font-medium"><%= l.entity_type %></span>
+                  <% if (l.entity_id) { %>
+                    <span class="text-[10px] text-slate-400 font-mono">#<%= l.entity_id %></span>
+                  <% } %>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold <%= l.status === 'SUCCESS' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'BLOCKED' ? 'bg-amber-950 text-amber-400' : 'bg-red-950 text-red-400') %>">
+                    <%= l.status %>
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-400 font-mono text-[11px] max-w-xs truncate" title="<%= l.details || '' %>">
+                  <%= l.details || '-' %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <% if (totalPages > 1) { %>
+        <div class="px-4 py-3 bg-slate-900/60 border-t border-slate-700/60 flex items-center justify-between text-xs">
+          <span class="text-slate-400">Page <%= page %> of <%= totalPages %></span>
+          <div class="flex items-center space-x-2">
+            <% if (page > 1) { %>
+              <a href="<%= recoveryRoutePath %>/audit?page=<%= page - 1 %><%= actionFilter ? '&action=' + actionFilter : '' %>" class="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Previous</a>
+            <% } %>
+            <% if (page < totalPages) { %>
+              <a href="<%= recoveryRoutePath %>/audit?page=<%= page + 1 %><%= actionFilter ? '&action=' + actionFilter : '' %>" class="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Next</a>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+<%- include('../../partials/footer') %>

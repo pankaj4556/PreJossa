@@ -8,8 +8,16 @@ const fs = require('fs');
 const db = require('../database/db');
 const config = require('../config.json');
 const { approvePayment, rejectPayment } = require('../services/paymentService');
+const { logAudit, recordVersion, softDeleteRecord, restoreSoftDeletedRecord } = require('../services/auditService');
+const { containmentGuard, getContainmentMode } = require('../services/threatService');
+const { loginRateLimiter, adminSessionHygiene, requireStepUpAuth } = require('../services/securityService');
+
+const recoveryRoutes = require('./recovery');
 
 const ADMIN_PREFIX = (process.env.ADMIN_ROUTE_PATH || '/@65783+@4556/admin').replace(/\/+$/, '');
+
+// Session hygiene middleware across all admin routes
+router.use(adminSessionHygiene);
 
 // Middleware to ensure admin authentication
 function requireAdmin(req, res, next) {
@@ -18,6 +26,9 @@ function requireAdmin(req, res, next) {
   }
   return res.redirect(`${ADMIN_PREFIX}/login`);
 }
+
+// Mount Recovery Center Sub-Router
+router.use('/recovery', recoveryRoutes);
 
 // 1. Admin Login Page
 router.get('/login', (req, res) => {
@@ -28,9 +39,11 @@ router.get('/login', (req, res) => {
 });
 
 // Admin Login Handler
-router.post('/login', (req, res) => {
+router.post('/login', loginRateLimiter, (req, res) => {
   const username = (req.body.username || '').trim();
   const password = (req.body.password || '').trim();
+  const ipAddress = req.ip || req.connection?.remoteAddress;
+  const userAgent = req.headers['user-agent'];
 
   if (!username || !password) {
     return res.render('admin/login', { error: 'Please enter both username and password.' });
@@ -73,6 +86,18 @@ router.post('/login', (req, res) => {
 
   if (authenticated && adminRecord) {
     req.session.adminUser = adminRecord;
+    logAudit({
+      actorId: adminRecord.id,
+      actorUsername: adminRecord.username,
+      actorRole: 'admin',
+      action: 'LOGIN',
+      entityType: 'admin_session',
+      entityId: adminRecord.username,
+      ipAddress,
+      userAgent,
+      status: 'SUCCESS'
+    });
+
     // Explicitly commit session before redirecting to avoid race conditions
     return req.session.save((saveErr) => {
       if (saveErr) {
@@ -82,12 +107,38 @@ router.post('/login', (req, res) => {
     });
   }
 
+  logAudit({
+    actorUsername: username || 'anonymous',
+    actorRole: 'admin',
+    action: 'FAILED_LOGIN',
+    entityType: 'admin_session',
+    entityId: username || 'unknown',
+    ipAddress,
+    userAgent,
+    status: 'FAILURE',
+    details: { attemptedUsername: username }
+  });
+
   res.render('admin/login', { error: 'Invalid admin credentials.' });
 });
 
 // Admin Logout Handler
 router.get('/logout', (req, res) => {
+  if (req.session && req.session.adminUser) {
+    logAudit({
+      actorId: req.session.adminUser.id,
+      actorUsername: req.session.adminUser.username,
+      actorRole: 'admin',
+      action: 'LOGOUT',
+      entityType: 'admin_session',
+      entityId: req.session.adminUser.username,
+      ipAddress: req.ip || req.connection?.remoteAddress,
+      userAgent: req.headers['user-agent'],
+      status: 'SUCCESS'
+    });
+  }
   req.session.adminUser = null;
+  req.session.stepUpAuthorizedUntil = null;
   req.session.save(() => {
     res.redirect(`${ADMIN_PREFIX}/login`);
   });
@@ -183,10 +234,18 @@ router.get('/payments', requireAdmin, (req, res) => {
 });
 
 // Approve Payment Route
-router.post('/payments/:id/approve', requireAdmin, (req, res) => {
+router.post('/payments/:id/approve', requireAdmin, containmentGuard('update'), (req, res) => {
   try {
     const paymentId = parseInt(req.params.id, 10);
     approvePayment(paymentId, req.session.adminUser.username);
+    logAudit({
+      actorUsername: req.session.adminUser.username,
+      actorRole: 'admin',
+      action: 'APPROVE_PAYMENT',
+      entityType: 'payment',
+      entityId: paymentId,
+      status: 'SUCCESS'
+    });
     res.json({ success: true, message: 'Payment approved! Choice list download unlocked for student.' });
   } catch (err) {
     console.error('Approve payment error:', err);
@@ -195,15 +254,48 @@ router.post('/payments/:id/approve', requireAdmin, (req, res) => {
 });
 
 // Reject Payment Route
-router.post('/payments/:id/reject', requireAdmin, (req, res) => {
+router.post('/payments/:id/reject', requireAdmin, containmentGuard('update'), (req, res) => {
   try {
     const paymentId = parseInt(req.params.id, 10);
     const { reason } = req.body;
     rejectPayment(paymentId, reason, req.session.adminUser.username);
+    logAudit({
+      actorUsername: req.session.adminUser.username,
+      actorRole: 'admin',
+      action: 'REJECT_PAYMENT',
+      entityType: 'payment',
+      entityId: paymentId,
+      status: 'SUCCESS',
+      details: { reason }
+    });
     res.json({ success: true, message: 'Payment rejected with reason recorded.' });
   } catch (err) {
     console.error('Reject payment error:', err);
     res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Generic Soft-Delete Record Route (Immutable-by-design: replaces hard delete)
+router.post('/records/soft-delete', requireAdmin, containmentGuard('delete'), requireStepUpAuth, (req, res) => {
+  try {
+    const { entityType, entityId, reason } = req.body;
+    const result = softDeleteRecord(entityType, parseInt(entityId, 10), req.session.adminUser, reason);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    console.error('Soft delete error:', err);
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// Generic Restore Soft-Deleted Record Route
+router.post('/records/restore', requireAdmin, containmentGuard('restore'), requireStepUpAuth, (req, res) => {
+  try {
+    const { entityType, entityId } = req.body;
+    const result = restoreSoftDeletedRecord(entityType, parseInt(entityId, 10), req.session.adminUser);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    console.error('Restore error:', err);
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 

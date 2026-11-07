@@ -1,0 +1,134 @@
+<%- include('../../partials/head', { title: 'Restore to Staging Workflow — Recovery Center' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <%- include('./nav', { activeTab: 'staging' }) %>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">“Restore to Staging” Workflow</h1>
+        <p class="text-xs text-slate-400 mt-1">Safely restore any recovery point to an isolated staging instance (<code class="text-purple-300">database/staging.sqlite</code>) and run automated health audits before touching production.</p>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <form method="POST" action="<%= recoveryRoutePath %>/staging/run" class="inline">
+          <button type="submit" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold transition flex items-center space-x-1.5 shadow-md shadow-purple-950/40">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            <span>Deploy Last Known Good to Staging</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <% if (flash) { %>
+      <div class="p-4 rounded-xl text-xs font-medium flex items-center space-x-2 <%= flashType === 'success' ? 'bg-emerald-950/80 border border-emerald-700/60 text-emerald-200' : 'bg-red-950/80 border border-red-700/60 text-red-200' %>">
+        <i data-lucide="<%= flashType === 'success' ? 'check-circle' : 'alert-octagon' %>" class="w-4 h-4 flex-shrink-0"></i>
+        <span><%= flash %></span>
+      </div>
+    <% } %>
+
+    <!-- Current Staging Instance Status Banner -->
+    <div class="p-6 rounded-2xl bg-slate-800 border border-slate-700/80 shadow-lg space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/40 flex items-center justify-center text-purple-400">
+            <i data-lucide="server" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white">Staging SQLite Database Instance</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Physical File: <code class="text-purple-300 font-mono"><%= stats.staging ? stats.staging.path : 'database/staging.sqlite (Not yet created)' %></code></p>
+          </div>
+        </div>
+
+        <span class="px-3 py-1 rounded-full text-xs font-bold <%= stats.staging ? 'bg-emerald-950 border border-emerald-700 text-emerald-300' : 'bg-slate-700 text-slate-400' %>">
+          <%= stats.staging ? 'INSTANCE ACTIVE' : 'PENDING RESTORE' %>
+        </span>
+      </div>
+
+      <% if (stats.staging) { %>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-700/60 text-xs">
+          <div>
+            <span class="text-slate-400 text-[11px] block">Database Size</span>
+            <span class="font-mono text-slate-200 font-bold"><%= (stats.staging.sizeBytes / 1024 / 1024).toFixed(2) %> MB</span>
+          </div>
+          <div>
+            <span class="text-slate-400 text-[11px] block">Last Restored / Updated</span>
+            <span class="font-mono text-slate-300"><%= stats.staging.updatedAt %></span>
+          </div>
+          <div>
+            <span class="text-slate-400 text-[11px] block">Status for Production Promotion</span>
+            <span class="text-emerald-400 font-semibold flex items-center space-x-1">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Ready for Promotion</span>
+            </span>
+          </div>
+        </div>
+      <% } else { %>
+        <p class="text-xs text-slate-400 pt-2">Click <strong>"Deploy Last Known Good to Staging"</strong> above to initialize the staging instance and execute verification checks.</p>
+      <% } %>
+    </div>
+
+    <!-- Latest Staging Execution Report -->
+    <% if (stagingResult) { %>
+      <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-800 via-slate-800 to-purple-950/40 border border-purple-500/40 shadow-xl space-y-5 animate-in fade-in">
+        <div class="flex items-center justify-between border-b border-slate-700/80 pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+            <h3 class="text-base font-bold text-white">Staging Health Check Verification Report</h3>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 font-bold">RTO: <%= stagingResult.rtoSeconds %>s</span>
+        </div>
+
+        <!-- 4 Health Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block">Integrity Check</span>
+            <div class="text-xl font-bold font-mono text-emerald-400 mt-1"><%= stagingResult.report.healthChecks.integrityCheck %></div>
+            <span class="text-[10px] text-slate-400">PRAGMA integrity_check</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block">Foreign Keys</span>
+            <div class="text-xl font-bold font-mono text-emerald-400 mt-1"><%= stagingResult.report.healthChecks.foreignKeyCheck %></div>
+            <span class="text-[10px] text-slate-400">Zero constraint issues</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block">Query Latency</span>
+            <div class="text-xl font-bold font-mono text-purple-300 mt-1"><%= stagingResult.report.queryPerformanceMs.toFixed(2) %> ms</div>
+            <span class="text-[10px] text-slate-400">100 Relational Joins</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block">Overall Verdict</span>
+            <div class="text-xl font-bold font-mono text-emerald-400 mt-1"><%= stagingResult.report.overallStatus %></div>
+            <span class="text-[10px] text-slate-400">Verified Staging Healthy</span>
+          </div>
+        </div>
+
+        <!-- Row Counts Breakdown Grid -->
+        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+          <span class="text-xs font-bold text-slate-200 block uppercase tracking-wider text-[11px]">Staging Table Row Count Audit:</span>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+            <% Object.entries(stagingResult.report.tableMetrics || {}).forEach(([table, count]) => { %>
+              <div class="p-2 rounded bg-slate-800/60 border border-slate-700/50">
+                <span class="text-[10px] text-slate-400 block truncate"><%= table %></span>
+                <span class="font-mono font-bold text-slate-200"><%= count %></span>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+      </div>
+    <% } %>
+
+  </main>
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+<%- include('../../partials/footer') %>

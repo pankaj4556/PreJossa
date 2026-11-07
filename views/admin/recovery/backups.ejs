@@ -1,0 +1,168 @@
+<%- include('../../partials/head', { title: 'Backups Catalog & Validation — Recovery Center' }) %>
+
+<div class="min-h-screen bg-slate-900 text-white flex flex-col">
+  <%- include('./nav', { activeTab: 'backups' }) %>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Recovery Point Catalog &amp; Validation</h1>
+        <p class="text-xs text-slate-400 mt-1">Every backup is automatically subjected to PRAGMA integrity checks, foreign key validation, and row count verification.</p>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <form method="POST" action="<%= recoveryRoutePath %>/backups/create">
+          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold transition flex items-center space-x-1.5 shadow-md shadow-emerald-950/40">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Create &amp; Validate New Backup</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <% if (flash) { %>
+      <div class="p-4 rounded-xl text-xs font-medium flex items-center space-x-2 <%= flashType === 'success' ? 'bg-emerald-950/80 border border-emerald-700/60 text-emerald-200' : 'bg-red-950/80 border border-red-700/60 text-red-200' %>">
+        <i data-lucide="<%= flashType === 'success' ? 'check-circle' : 'alert-octagon' %>" class="w-4 h-4 flex-shrink-0"></i>
+        <span><%= flash %></span>
+      </div>
+    <% } %>
+
+    <!-- Validation Rules Explanation Banner -->
+    <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs text-slate-300 space-y-2">
+      <div class="flex items-center space-x-2 text-emerald-400 font-bold">
+        <i data-lucide="shield-check" class="w-4 h-4"></i>
+        <span>Automated 4-Stage "Validated Clean" Protocol</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-[11px] text-slate-400">
+        <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+          <strong class="text-slate-200 block">1. Storage Integrity</strong>
+          <span>Executes <code class="text-sky-300">PRAGMA integrity_check</code> to verify zero page/B-tree corruption.</span>
+        </div>
+        <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+          <strong class="text-slate-200 block">2. Foreign Key Check</strong>
+          <span>Executes <code class="text-sky-300">PRAGMA foreign_key_check</code> to ensure relational consistency.</span>
+        </div>
+        <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+          <strong class="text-slate-200 block">3. Minimum Row Counts</strong>
+          <span>Verifies critical seed data &amp; entities (institutes, programs, ranks, admins).</span>
+        </div>
+        <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+          <strong class="text-slate-200 block">4. SHA-256 Signature</strong>
+          <span>Calculates immutable cryptographic fingerprint before promotion to Last Known Good.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backups Table -->
+    <div class="rounded-2xl bg-slate-800 border border-slate-700/80 overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900/80 border-b border-slate-700/80 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="px-4 py-3">Point / File</th>
+              <th class="px-4 py-3">Status &bull; Integrity</th>
+              <th class="px-4 py-3">SHA-256 Checksum</th>
+              <th class="px-4 py-3">Size &bull; Type</th>
+              <th class="px-4 py-3">Validation Details</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700/50">
+            <% if (stats.backups.length === 0) { %>
+              <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-slate-400">No recovery points registered yet.</td>
+              </tr>
+            <% } %>
+            <% stats.backups.forEach(b => { %>
+              <tr class="hover:bg-slate-700/30 transition">
+                <td class="px-4 py-3">
+                  <div class="font-medium text-slate-200 flex items-center space-x-1.5">
+                    <span><%= b.filename %></span>
+                    <% if (b.is_last_known_good) { %>
+                      <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950 border border-amber-700 text-amber-300">
+                        LKG
+                      </span>
+                    <% } %>
+                  </div>
+                  <div class="text-[11px] text-slate-400 font-mono mt-0.5"><%= b.created_at %></div>
+                </td>
+                <td class="px-4 py-3">
+                  <% if (b.status === 'validated_clean') { %>
+                    <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 border border-emerald-700 text-emerald-400">
+                      <i data-lucide="check" class="w-3 h-3"></i>
+                      <span>Validated Clean</span>
+                    </span>
+                  <% } else { %>
+                    <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 border border-red-700 text-red-400">
+                      <i data-lucide="x" class="w-3 h-3"></i>
+                      <span><%= b.status %></span>
+                    </span>
+                  <% } %>
+                  <div class="text-[10px] text-slate-400 mt-1">
+                    Integrity: <strong class="text-slate-300"><%= b.integrity_check_status || 'OK' %></strong> &bull; FK: <strong class="text-slate-300"><%= b.foreign_key_status || 'OK' %></strong>
+                  </div>
+                </td>
+                <td class="px-4 py-3 font-mono text-[11px]">
+                  <span class="text-emerald-400 block max-w-xs truncate" title="<%= b.sha256_checksum %>">
+                    <%= b.sha256_checksum || 'Pending' %>
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="font-mono text-slate-200"><%= (b.filesize_bytes / 1024 / 1024).toFixed(2) %> MB</div>
+                  <span class="text-[10px] uppercase text-slate-400 font-semibold"><%= b.backup_type %></span>
+                </td>
+                <td class="px-4 py-3 text-[11px] text-slate-300">
+                  <% if (b.row_counts_json) { 
+                    try { 
+                      const rc = JSON.parse(b.row_counts_json); %>
+                      <div class="space-x-1 text-[10px] text-slate-400">
+                        <span>Institutes: <strong class="text-slate-200"><%= rc.institutes || 0 %></strong></span> &bull;
+                        <span>Programs: <strong class="text-slate-200"><%= rc.programs || 0 %></strong></span> &bull;
+                        <span>Users: <strong class="text-slate-200"><%= rc.users || 0 %></strong></span>
+                      </div>
+                    <% } catch(e) {} 
+                  } %>
+                </td>
+                <td class="px-4 py-3 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end space-x-1.5">
+                    <!-- Revalidate Button -->
+                    <form method="POST" action="<%= recoveryRoutePath %>/backups/<%= b.id %>/validate" class="inline">
+                      <button type="submit" class="px-2.5 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-[11px] font-medium" title="Re-run automated validation">
+                        Validate
+                      </button>
+                    </form>
+
+                    <!-- Run Drill Button -->
+                    <form method="POST" action="<%= recoveryRoutePath %>/drills/run" class="inline">
+                      <input type="hidden" name="backupId" value="<%= b.id %>">
+                      <button type="submit" class="px-2.5 py-1 rounded bg-sky-900/50 hover:bg-sky-800 text-sky-200 text-[11px] font-semibold" title="Run Sandbox Restore Drill">
+                        Drill
+                      </button>
+                    </form>
+
+                    <!-- Deploy to Staging Button -->
+                    <form method="POST" action="<%= recoveryRoutePath %>/staging/run" class="inline">
+                      <input type="hidden" name="backupId" value="<%= b.id %>">
+                      <button type="submit" class="px-2.5 py-1 rounded bg-purple-900/60 hover:bg-purple-800 text-purple-200 text-[11px] font-semibold" title="Restore to Staging instance">
+                        Staging
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+<%- include('../../partials/footer') %>

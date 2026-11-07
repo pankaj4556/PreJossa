@@ -12,6 +12,9 @@ const { exportToPdf } = require('../services/pdfExporter');
 const { exportToExcel } = require('../services/excelExporter');
 const { exportToCsv } = require('../services/csvExporter');
 const { exportToWord } = require('../services/wordExporter');
+const { logAudit } = require('../services/auditService');
+const { containmentGuard } = require('../services/threatService');
+const { exportRateLimiter, loginRateLimiter } = require('../services/securityService');
 const {
   getPaymentStatus,
   getUpiConfig,
@@ -330,7 +333,7 @@ router.get('/payment-status/:choiceListId', (req, res) => {
 });
 
 // 9. Protected Download Handler (PDF, Excel, CSV, Word)
-router.get('/download/:format/:choiceListId', (req, res) => {
+router.get('/download/:format/:choiceListId', exportRateLimiter, containmentGuard('export'), (req, res) => {
   try {
     const { format, choiceListId } = req.params;
     const user = req.session ? req.session.user : null;
@@ -374,6 +377,20 @@ router.get('/download/:format/:choiceListId', (req, res) => {
     // Record format analytics
     db.prepare(`INSERT INTO generated_lists (format) VALUES (?)`).run(format);
 
+    // Audit log immutable record
+    logAudit({
+      actorId: user.id,
+      actorUsername: user.email,
+      actorRole: user.role || 'user',
+      action: 'EXPORT',
+      entityType: 'choice_list',
+      entityId: choiceListId,
+      ipAddress: req.ip || req.connection?.remoteAddress,
+      userAgent: req.headers['user-agent'],
+      status: 'SUCCESS',
+      details: { format, choiceCount: choices.length }
+    });
+
     const filename = `choice-list-rank${inputs.jeeMainRank || 'jee'}-${new Date().toISOString().slice(0, 10)}`;
 
     if (format === 'pdf') {
@@ -402,15 +419,29 @@ router.get('/download/:format/:choiceListId', (req, res) => {
 });
 
 // 7. Auth: Login
-router.post('/auth/login', (req, res) => {
+router.post('/auth/login', loginRateLimiter, (req, res) => {
   try {
     const { email, password } = req.body;
+    const ipAddress = req.ip || req.connection?.remoteAddress;
+    const userAgent = req.headers['user-agent'];
+
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide email and password.' });
     }
 
-    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email.toLowerCase().trim());
+    const cleanEmail = email.toLowerCase().trim();
+    const user = db.prepare(`SELECT * FROM users WHERE email = ? AND (is_deleted IS NULL OR is_deleted = 0)`).get(cleanEmail);
     if (!user || !bcrypt.compareSync(password, user.password_hash)) {
+      logAudit({
+        actorUsername: cleanEmail,
+        actorRole: 'user',
+        action: 'FAILED_LOGIN',
+        entityType: 'user_session',
+        entityId: cleanEmail,
+        ipAddress,
+        userAgent,
+        status: 'FAILURE'
+      });
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
@@ -421,6 +452,18 @@ router.post('/auth/login', (req, res) => {
       mobile: user.mobile,
       role: user.role
     };
+
+    logAudit({
+      actorId: user.id,
+      actorUsername: user.email,
+      actorRole: user.role || 'user',
+      action: 'LOGIN',
+      entityType: 'user_session',
+      entityId: user.id,
+      ipAddress,
+      userAgent,
+      status: 'SUCCESS'
+    });
 
     res.json({
       success: true,

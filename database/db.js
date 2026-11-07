@@ -44,6 +44,26 @@ try {
   console.warn('Note on payments schema migration:', migErr.message);
 }
 
+// Safe migration: Add soft delete columns (is_deleted, deleted_at) across mutable tables
+try {
+  const softDeleteTables = ['users', 'choice_lists', 'payments', 'purchases'];
+  for (const tbl of softDeleteTables) {
+    const tblExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(tbl);
+    if (tblExists) {
+      const cols = db.prepare(`PRAGMA table_info(${tbl})`).all().map(c => c.name);
+      if (!cols.includes('is_deleted')) {
+        db.exec(`ALTER TABLE ${tbl} ADD COLUMN is_deleted INTEGER DEFAULT 0;`);
+        db.exec(`CREATE INDEX IF NOT EXISTS idx_${tbl}_is_deleted ON ${tbl}(is_deleted);`);
+      }
+      if (!cols.includes('deleted_at')) {
+        db.exec(`ALTER TABLE ${tbl} ADD COLUMN deleted_at DATETIME;`);
+      }
+    }
+  }
+} catch (softDelErr) {
+  console.warn('Note on soft delete columns migration:', softDelErr.message);
+}
+
 // Ensure admin_users table and default admin exist
 try {
   db.exec(`

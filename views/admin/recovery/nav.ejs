@@ -1,0 +1,83 @@
+<!-- views/admin/recovery/nav.ejs -->
+<header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-30 backdrop-blur-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-950/50">
+        <i data-lucide="shield-check" class="w-4 h-4"></i>
+      </div>
+      <div>
+        <span class="font-bold text-slate-100 tracking-tight text-sm">JoSAA Admin</span>
+        <span class="text-[10px] text-emerald-400 font-mono ml-1.5 px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60 font-semibold uppercase">Recovery Center</span>
+      </div>
+    </div>
+
+    <!-- Main Admin Navigation -->
+    <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold">
+      <a href="<%= adminRoutePath %>" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Dashboard</a>
+      <a href="<%= adminRoutePath %>/payments" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Payments</a>
+      <a href="<%= adminRoutePath %>/audit" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Data Audit</a>
+      <a href="<%= adminRoutePath %>/imports" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">CSV Imports</a>
+      <a href="<%= adminRoutePath %>/recovery" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold flex items-center space-x-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Recovery Center</span>
+      </a>
+      <a href="<%= adminRoutePath %>/settings" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Settings</a>
+    </nav>
+
+    <div class="flex items-center space-x-3 text-xs">
+      <div class="hidden sm:flex items-center space-x-2 text-slate-400">
+        <span>Admin:</span>
+        <span class="text-slate-200 font-semibold"><%= admin ? admin.username : 'admin' %></span>
+      </div>
+      <a href="<%= adminRoutePath %>/logout" class="px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-900/50 text-red-400 hover:bg-red-900/40 transition">Log Out</a>
+    </div>
+  </div>
+
+  <!-- Sub-Nav: Recovery Center Modules -->
+  <div class="border-t border-slate-800/80 bg-slate-900/90 overflow-x-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 py-2 text-xs font-medium whitespace-nowrap">
+      <a href="<%= recoveryRoutePath %>" class="px-3 py-1 rounded-lg transition <%= activeTab === 'overview' ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+        <span>Overview</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/backups" class="px-3 py-1 rounded-lg transition <%= activeTab === 'backups' ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="database" class="w-3.5 h-3.5"></i>
+        <span>Backups</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/drills" class="px-3 py-1 rounded-lg transition <%= activeTab === 'drills' ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
+        <span>Restore Drill</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/staging" class="px-3 py-1 rounded-lg transition <%= activeTab === 'staging' ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+        <span>Restore to Staging</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/rpo-rto" class="px-3 py-1 rounded-lg transition <%= activeTab === 'rpo-rto' ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="timer" class="w-3.5 h-3.5"></i>
+        <span>RPO / RTO</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/threats" class="px-3 py-1 rounded-lg transition <%= activeTab === 'threats' ? 'bg-slate-800 text-amber-400 font-bold border border-amber-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+        <span>Threat Signals &amp; Containment</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/audit" class="px-3 py-1 rounded-lg transition <%= activeTab === 'audit' ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-white' %> flex items-center space-x-1.5">
+        <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+        <span>Audit Logs</span>
+      </a>
+      <a href="<%= recoveryRoutePath %>/ransomware-scenario" class="px-3 py-1 rounded-lg transition <%= activeTab === 'ransomware' ? 'bg-purple-950/60 text-purple-300 font-bold border border-purple-500/30' : 'text-purple-400 hover:text-purple-300' %> flex items-center space-x-1.5">
+        <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+        <span>Ransomware Drill (Interview Evidence)</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Containment Mode Global Alert Banner -->
+  <% if (containment && containment.enabled) { %>
+    <div class="bg-red-950/90 border-b border-red-700/60 px-4 py-2.5 text-center text-xs text-red-200 flex items-center justify-center space-x-2 animate-pulse">
+      <i data-lucide="shield-alert" class="w-4 h-4 text-red-400"></i>
+      <span class="font-bold tracking-wide">CONTAINMENT MODE ACTIVE:</span>
+      <span>All delete operations and file exports are globally locked across the system. Reason: <%= containment.reason || 'Security threat lockdown' %></span>
+      <a href="<%= recoveryRoutePath %>/threats" class="underline ml-2 text-white font-semibold">View Threat Console &rarr;</a>
+    </div>
+  <% } %>
+</header>
