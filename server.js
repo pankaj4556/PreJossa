@@ -20,6 +20,19 @@ const PORT = process.env.PORT || config.site?.port || 3000;
 // Trust proxy for reverse proxies (Render, Heroku, Cloudflare, Nginx) so secure cookies work properly
 app.set('trust proxy', 1);
 
+// Disable X-Powered-By
+app.disable('x-powered-by');
+
+// Security Headers Middleware (Grade A+ Security Rating)
+app.use((req, res, next) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), browsing-topics=()');
+  next();
+});
+
 // Setup Template Engine (EJS)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

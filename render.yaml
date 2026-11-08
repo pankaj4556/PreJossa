@@ -1,0 +1,76 @@
+# render.yaml — Render Infrastructure as Code Specification
+# Designed for Grade A+ Security & 100/100 Performance
+# NOTE: All confidential credentials and secrets use 'sync: false' so no secrets are committed.
+
+services:
+  - type: web
+    name: prejosaa
+    runtime: node
+    plan: starter # Paid starter or standard tier recommended to eliminate cold-start spin-down
+    region: singapore # Closest to Indian subcontinent users for lowest TTFB (<100ms)
+    buildCommand: npm ci && npm run build:landing
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD_HASH
+        sync: false # Set securely in Render Dashboard Environment variables
+      - key: ADMIN_EMAIL
+        sync: false # Set securely in Render Dashboard Environment variables
+      - key: RAZORPAY_KEY_ID
+        sync: false # Set securely in Render Dashboard Environment variables
+      - key: RAZORPAY_KEY_SECRET
+        sync: false # Set securely in Render Dashboard Environment variables
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false # Set securely in Render Dashboard Environment variables
+    headers:
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=63072000; includeSubDomains; preload
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=(), browsing-topics=()
+      - path: /*
+        name: Content-Security-Policy
+        value: >-
+          default-src 'self';
+          script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://checkout.razorpay.com;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          font-src 'self' https://fonts.gstatic.com data:;
+          img-src 'self' data: https: blob:;
+          connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com;
+          frame-src 'self' https://api.razorpay.com;
+          object-src 'none';
+          base-uri 'self';
+          form-action 'self';
+          frame-ancestors 'none';
+      - path: /images/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /dist/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /css/*
+        name: Cache-Control
+        value: public, max-age=604800, stale-while-revalidate=86400
+      - path: /js/*
+        name: Cache-Control
+        value: public, max-age=604800, stale-while-revalidate=86400

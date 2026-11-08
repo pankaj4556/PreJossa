@@ -1,0 +1,17 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /explore
+Allow: /generator
+Allow: /branches
+Allow: /nirf
+Allow: /about
+
+# Disallow administrative, internal API, and recovery endpoints
+Disallow: /admin/
+Disallow: /admin
+Disallow: /recovery/
+Disallow: /recovery
+Disallow: /api/
+
+Sitemap: https://prejosaa.onrender.com/sitemap.xml
