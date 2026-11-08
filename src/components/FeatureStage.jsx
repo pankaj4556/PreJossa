@@ -15,9 +15,10 @@ export default function FeatureStage({ lenisRef, onActiveFeatureChange }) {
   const stageRef = useRef(null);
   const containerRef = useRef(null);
   const scrollTriggerInstanceRef = useRef(null);
+  const lastStepRef = useRef(0);
+  const progressBarRef = useRef(null);
 
   const [activeStep, setActiveStep] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   const panels = [
     { id: 'counselling', num: '01', title: 'Counselling', Component: CounsellingPanel },
@@ -68,15 +69,20 @@ export default function FeatureStage({ lenisRef, onActiveFeatureChange }) {
             anticipatePin: 1,
             onUpdate: (self) => {
               const progress = self.progress;
-              setScrollProgress(progress);
+              if (progressBarRef.current) {
+                progressBarRef.current.style.height = `${Math.max(progress * 100, 6)}%`;
+              }
 
               // Determine active step (0 to 4)
               const step = Math.min(
                 Math.floor(progress * panels.length),
                 panels.length - 1
               );
-              setActiveStep(step);
-              if (onActiveFeatureChange) onActiveFeatureChange(step);
+              if (step !== lastStepRef.current) {
+                lastStepRef.current = step;
+                setActiveStep(step);
+                if (onActiveFeatureChange) onActiveFeatureChange(step);
+              }
             }
           }
         });
@@ -218,8 +224,9 @@ export default function FeatureStage({ lenisRef, onActiveFeatureChange }) {
         {/* Vertical Progress Track */}
         <div className="relative w-[2px] h-44 bg-white/[0.08] rounded-full overflow-hidden">
           <div
-            className="absolute top-0 left-0 w-full bg-gradient-to-b from-blue-500 via-cyan-400 to-amber-400 rounded-full transition-all duration-150 ease-out"
-            style={{ height: `${Math.max(scrollProgress * 100, 6)}%` }}
+            ref={progressBarRef}
+            className="absolute top-0 left-0 w-full bg-gradient-to-b from-blue-500 via-cyan-400 to-amber-400 rounded-full"
+            style={{ height: '6%' }}
           />
         </div>
 

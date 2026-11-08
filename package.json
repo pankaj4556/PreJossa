@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "seed": "node database/seed.js",
+    "build:css": "tailwindcss -i src/styles/tailwind.css -o public/css/tailwind.output.css --minify",
     "build:landing": "esbuild src/index.jsx --bundle --minify --outfile=public/dist/landing.bundle.js --loader:.js=jsx --define:process.env.NODE_ENV=\"'production'\"",
+    "build": "npm run build:css && npm run build:landing",
     "watch:landing": "esbuild src/index.jsx --bundle --watch --outfile=public/dist/landing.bundle.js --loader:.js=jsx --define:process.env.NODE_ENV=\"'development'\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +21,7 @@
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^13.0.3",
     "better-sqlite3-session-store": "^0.1.0",
+    "compression": "^1.8.2",
     "csv-parser": "^3.2.1",
     "csv-writer": "^1.6.0",
     "docx": "^9.11.0",
@@ -36,6 +39,7 @@
     "razorpay": "^2.9.8",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "sqlite3": "^6.0.1"
+    "sqlite3": "^6.0.1",
+    "tailwindcss": "^3.4.17"
   }
 }

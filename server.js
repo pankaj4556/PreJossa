@@ -6,6 +6,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
+const compression = require('compression');
 
 // Load Configuration
 const configPath = path.resolve(__dirname, 'config.json');
@@ -33,6 +34,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Enable HTTP compression for text, JSON, HTML, CSS and JS
+app.use(compression({
+  threshold: 1024
+}));
+
 // Setup Template Engine (EJS)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -45,8 +51,19 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve Static Assets (Tailwind, JS, Images, Icons)
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve Static Assets with optimized caching headers
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.ico') || filePath.endsWith('.png') || filePath.endsWith('.avif') || filePath.endsWith('.webp')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+    }
+  }
+}));
 
 // Session Configuration (SQLite-backed — survives server restarts)
 const SqliteStore = require('better-sqlite3-session-store')(session);

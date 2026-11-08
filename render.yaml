@@ -8,7 +8,7 @@ services:
     runtime: node
     plan: starter # Paid starter or standard tier recommended to eliminate cold-start spin-down
     region: singapore # Closest to Indian subcontinent users for lowest TTFB (<100ms)
-    buildCommand: npm ci && npm run build:landing
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /
     autoDeploy: true

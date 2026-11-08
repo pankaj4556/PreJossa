@@ -33,21 +33,26 @@ export default function LandingApp() {
       lenis.raf(time * 1000);
     };
     gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    // Allow graceful lag smoothing (max 500ms lag, target 33ms/30fps threshold) to prevent thread blocking
+    gsap.ticker.lagSmoothing(500, 33);
 
-    // Call ScrollTrigger.refresh after fonts & assets load
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(() => {
+    // Call ScrollTrigger.refresh safely after fonts & assets load without stacking layout queries
+    let refreshed = false;
+    const safeRefresh = () => {
+      if (refreshed) return;
+      refreshed = true;
+      requestAnimationFrame(() => {
         ScrollTrigger.refresh();
       });
+    };
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(safeRefresh);
+    } else {
+      const timer = setTimeout(safeRefresh, 300);
     }
 
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 500);
-
     return () => {
-      clearTimeout(timer);
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
